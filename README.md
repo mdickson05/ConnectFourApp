@@ -1,12 +1,16 @@
-# MAD Assignment
+# Mobile Application Development Assignment 1 (Part A)
 #### Jet Le (21546679), Marcus Dickson (21549225), Charles Cope (21489473)
 
-^add ur student id btw
-
 ## About
-This is an app.
+Classic connect four game for Android in Kotlin as part of group MAD assignment.
 
-## Functionalities
+## Features
+- Multiple game modes: AI and 2-player mode
+- User and gamerule customisation: Grid size, Colour themes, Player names
+- User profile creation and avatar selection 
+- Gameplay statistic tracking: total games played, win, losses and win %
+- In game information: Game board, player turn indicators, game progress, notifications/messages, undo/reset, settings/menu, user profile
+- Special technical requirements: adaptive UI, state preservation, modular UI architecture
 
 ## Using Git/Github
 
