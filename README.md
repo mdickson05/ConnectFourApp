@@ -4,7 +4,7 @@
 ^add ur student id btw
 
 ## About
-This is an app
+This is an app.
 
 ## Functionalities
 
@@ -48,4 +48,3 @@ When everyone is making pull requests, its important to regularly 'pull' the cha
 `git commit -m '<your-message>'`
 `git push origin <your-branch-name>`
 If you have forgot your branch name, use the command `git branch` to see all branches.
-
