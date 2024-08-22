@@ -1,5 +1,5 @@
 # MAD Assignment
-#### Jet Le (21546679), Marcus Dickson (21549225), Charles Cope ()
+#### Jet Le (21546679), Marcus Dickson (21549225), Charles Cope (21489473)
 
 ^add ur student id btw
 
