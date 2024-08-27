@@ -89,7 +89,74 @@ fun GameScreen(){
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ){
+            // Back to menu
+            Button(
+                onClick = { /*TODO*/ },
+                modifier = Modifier.size(48.dp),
+                shape = CircleShape,
+                contentPadding = PaddingValues(1.dp)
+            ) {
 
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back to Menu"
+                )
+            }
+
+            // Pause game
+            Button(
+                onClick = { /*TODO*/ },
+                modifier = Modifier.size(48.dp),
+                shape = CircleShape,
+                contentPadding = PaddingValues(1.dp)
+            ) {
+
+                Icon(
+                    painter = painterResource(R.drawable.baseline_pause),
+                    contentDescription = "Pause"
+                )
+            }
+
+            // Settings
+            Button(
+                onClick = { /*TODO*/ },
+                modifier = Modifier.size(48.dp),
+                shape = CircleShape,
+                contentPadding = PaddingValues(1.dp)
+            ){
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Settings",
+                )
+            }
+
+            // Reset game
+            Button(
+                onClick = { /*TODO*/},
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .size(width = 0.dp, height = 48.dp)
+                ,
+
+                contentPadding = PaddingValues(1.dp),
+
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Red,
+                    contentColor = Color.White
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = "Reset",
+                )
+                Spacer(modifier = Modifier
+                    .width(12.dp)
+                )
+                Text(
+                    text = "Reset Game"
+                )
+
+            }
         }
     }
 }
