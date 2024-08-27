@@ -120,7 +120,7 @@ fun GameScreen(){
                 .background(BoardBlue),
             contentAlignment = Alignment.Center
         ){
-            
+            GameBoard() // calls Component.GameBoard()
         }
 
         // Moves remaining/played
