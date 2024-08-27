@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,9 +27,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.connectfourapp.ui.theme.BoardBlue
 import com.example.connectfourapp.ui.theme.GreyBG
+import com.example.connectfourapp.ui.theme.Righteous
 
 @Composable
 fun GameScreen(){
@@ -43,14 +48,19 @@ fun GameScreen(){
     ) {
 
         // Player 1 vs Player 2 + stats
-        Row {
+        Row (
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ){
             // Player 1 + stats
             Column {
+
 
             }
             // Vs.
             Column {
-
             }
             // Player 2 + stats
             Column {
@@ -58,24 +68,40 @@ fun GameScreen(){
             }
         }
 
-        // Player 1's turn
-        Text(text = "Player 1's Turn...")
+
+        Row (
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Player 1's turn
+            Text(text = "Player 1's Turn...")
+        }
 
         // Board!
-        Box {
+        Box (
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .background(BoardBlue),
+            contentAlignment = Alignment.Center
+        ){
             
         }
 
         // Moves remaining/played
-        Row {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        )
+        {
             // TODO: Make the moves played/remaining variables
-            Column (
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceEvenly
-            ){
-                Text(text = "Moves played: 0") // moves played
-                Text(text = "Moves remaining: 42") // moves remaining
-            }
+
+            Text(text = "Moves played: 0") // moves played
+            Text(text = "Moves remaining: 42") // moves remaining
         }
 
         // Buttons
