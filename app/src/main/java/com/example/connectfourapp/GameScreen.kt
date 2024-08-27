@@ -61,6 +61,7 @@ fun GameScreen(){
             }
             // Vs.
             Column {
+                Text(text = "vs.", fontFamily = Righteous, fontSize = 40.sp)
             }
             // Player 2 + stats
             Column {
