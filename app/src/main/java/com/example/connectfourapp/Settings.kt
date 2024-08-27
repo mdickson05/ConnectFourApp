@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -31,6 +32,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -41,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -69,6 +72,15 @@ fun SettingsScreen(){
     var playerTwoIsExpanded by remember {
         mutableStateOf(false)
     }
+
+    // Board Radio Options
+    val boardOptions = listOf("Small (6x5)", "Standard (7x6) ", "Large (8x7)")
+    val (selectedBoardOption, onBoardOptionSelected) = remember { mutableStateOf(boardOptions[1] ) }
+
+    // Game Mode Radio Options
+    val modeOptions = listOf("Single-Player", "Multiplayer")
+    val modeOptionsDesc = listOf("(Player 1 vs. AI)", "(Player 1 vs. Player 2)")
+    val (selectedModeOption, onModeOptionSelected) = remember { mutableStateOf(modeOptions[0] ) }
 
     Column(
         modifier = Modifier
@@ -241,23 +253,105 @@ fun SettingsScreen(){
             }
 
             //---------- Board Customisation
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                Text(text = "Board Size")
+                Text(text = "Board Size", fontFamily = CooperBTBold, fontSize = 20.sp, modifier = Modifier.padding(bottom = 15.dp))
+                Row (
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    boardOptions.forEach { text ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .selectable(
+                                    selected = (text == selectedBoardOption),
+                                    onClick = {
+                                        onBoardOptionSelected(text)
+                                    }
+                                )
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .background(Color.DarkGray),
+                                contentScale = ContentScale.Crop
+                            )
+                            RadioButton(
+                                selected = (text == selectedBoardOption),
+                                onClick = { onBoardOptionSelected(text) }
+                            )
+                            Text(
+                                text = text,
+                            )
+                        }
+                    }
+                }
             }
 
             //---------- Mode Customisation
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(text = "Mode", fontFamily = CooperBTBold, fontSize = 20.sp, modifier = Modifier.padding(bottom = 15.dp))
+                Row (
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    modeOptions.forEachIndexed { index, text ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .selectable(
+                                    selected = (text == selectedModeOption),
+                                    onClick = {
+                                        onModeOptionSelected(text)
+                                    }
+                                )
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .background(Color.DarkGray),
+                                contentScale = ContentScale.Crop
+                            )
+                            RadioButton(
+                                selected = (text == selectedModeOption),
+                                onClick = { onModeOptionSelected(text) }
+                            )
+                            Text(
+                                text = text,
+                            )
+                            Text(
+                                text = modeOptionsDesc[index],
+                                fontSize = 12.sp
+                            )
+                        }
+                    }
+                }
+            }
+
+            //---------- Option buttons
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Mode")
+
             }
         }
     }
