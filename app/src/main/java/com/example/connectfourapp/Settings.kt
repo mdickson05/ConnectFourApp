@@ -24,6 +24,10 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -46,11 +50,24 @@ import com.example.connectfourapp.ui.theme.GreyBG
 import com.example.connectfourapp.ui.theme.Righteous
 
 //---------- Settings Screen Layout
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(){
-    // Player 1 and 2 Names
+
+    // TextView Names Variables
     var playerOneName by remember { mutableStateOf("Player 1") }
     var playerTwoName by remember { mutableStateOf("Player 2") }
+
+    // ExposedDropDown Colour Variables
+    val colours = listOf("Red", "Yellow", "Green", "Orange", "Pink")
+    var playerOneColour by remember {mutableStateOf(colours[0])} //Default colour is Red
+    var playerTwoColour by remember { mutableStateOf(colours[1]) } //Default colour is Yellow
+    var playerOneIsExpanded by remember {
+        mutableStateOf(false)
+    }
+    var playerTwoIsExpanded by remember {
+        mutableStateOf(false)
+    }
 
     Column(
         modifier = Modifier
@@ -92,6 +109,8 @@ fun SettingsScreen(){
                             imageVector = Icons.Default.AccountCircle,
                             contentDescription = "Player 1 Profile Pic"
                         )
+
+                        // Player 1 Name
                         OutlinedTextField(
                             value = playerOneName,
                             onValueChange = { newPlayerOneName ->
@@ -99,6 +118,33 @@ fun SettingsScreen(){
                             },
                             label = { Text(text = "Player 1 name...") },
                         )
+
+                        //Player 1 Colour
+                        ExposedDropdownMenuBox(
+                            expanded = playerOneIsExpanded,
+                            onExpandedChange = {playerOneIsExpanded = !playerOneIsExpanded },
+                            modifier = Modifier.padding(top = 8.dp)
+                        ){
+                            TextField(
+                                modifier = Modifier.menuAnchor(),
+                                value = playerOneColour,
+                                onValueChange = {},
+                                readOnly = true,
+                                trailingIcon = {ExposedDropdownMenuDefaults.TrailingIcon(expanded = playerOneIsExpanded)}
+                            )
+                            ExposedDropdownMenu(expanded = playerOneIsExpanded, onDismissRequest = { playerOneIsExpanded = false }) {
+                                colours.forEachIndexed { index, text ->
+                                    DropdownMenuItem(
+                                        text = { Text(text = text) },
+                                        onClick = {
+                                            playerOneColour = colours[index]
+                                            playerOneIsExpanded = false
+                                        },
+                                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -125,6 +171,32 @@ fun SettingsScreen(){
                             },
                             label = { Text(text = "Player 2 name...") },
                         )
+
+                        ExposedDropdownMenuBox(
+                            expanded = playerTwoIsExpanded,
+                            onExpandedChange = {playerTwoIsExpanded = !playerTwoIsExpanded },
+                            modifier = Modifier.padding(top = 8.dp)
+                        ){
+                            TextField(
+                                modifier = Modifier.menuAnchor(),
+                                value = playerTwoColour,
+                                onValueChange = {},
+                                readOnly = true,
+                                trailingIcon = {ExposedDropdownMenuDefaults.TrailingIcon(expanded = playerTwoIsExpanded)}
+                            )
+                            ExposedDropdownMenu(expanded = playerTwoIsExpanded, onDismissRequest = { playerTwoIsExpanded = false }) {
+                                colours.forEachIndexed { index, text ->
+                                    DropdownMenuItem(
+                                        text = { Text(text = text) },
+                                        onClick = {
+                                            playerTwoColour = colours[index]
+                                            playerTwoIsExpanded = false
+                                        },
+                                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
