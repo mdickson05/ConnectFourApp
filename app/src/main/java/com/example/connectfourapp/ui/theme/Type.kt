@@ -38,3 +38,11 @@ val Typography = Typography(
 val Righteous = FontFamily(
     Font(R.font.righteous)
 )
+
+val CooperBTBold = FontFamily(
+    Font(R.font.cooperbtbold)
+)
+
+val CooperBTBoldItalic = FontFamily(
+    Font(R.font.cooperbtbolditalic)
+)
