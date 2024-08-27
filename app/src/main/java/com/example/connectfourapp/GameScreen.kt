@@ -1,5 +1,6 @@
 package com.example.connectfourapp
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
@@ -27,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,17 +56,48 @@ fun GameScreen(){
             verticalAlignment = Alignment.CenterVertically
         ){
             // Player 1 + stats
-            Column {
+            Column (
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly
+            ){
+                Image(
+                    modifier = Modifier
+                        .size(64.dp),
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Player 1 Profile Pic"
+                )
 
-
+                Column (
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(text = "Player 1", fontSize = 20.sp)
+                    Text(text = "Wins: 0")
+                    Text(text = "Win Rate: 0%")
+                }
             }
             // Vs.
             Column {
                 Text(text = "vs.", fontFamily = Righteous, fontSize = 40.sp)
             }
             // Player 2 + stats
-            Column {
+            Column (
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly
+            ){
+                Image(
+                    modifier = Modifier
+                        .size(64.dp),
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Player 1 Profile Pic"
+                )
 
+                Column (
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Text(text = "Player 2", fontSize = 20.sp)
+                    Text(text = "Wins: 0")
+                    Text(text = "Win Rate: 0%")
+                }
             }
         }
 
