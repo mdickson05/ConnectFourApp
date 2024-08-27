@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
@@ -59,7 +60,7 @@ fun SettingsScreen(){
     var playerTwoName by remember { mutableStateOf("Player 2") }
 
     // ExposedDropDown Colour Variables
-    val colours = listOf("Red", "Yellow", "Green", "Orange", "Pink")
+    val colours = listOf("Red", "Yellow", "Green", "Orange", "Pink") // List of player colours
     var playerOneColour by remember {mutableStateOf(colours[0])} //Default colour is Red
     var playerTwoColour by remember { mutableStateOf(colours[1]) } //Default colour is Yellow
     var playerOneIsExpanded by remember {
@@ -78,7 +79,7 @@ fun SettingsScreen(){
         verticalArrangement = Arrangement.Top
     ) {
 
-        Text(text = "Settings", fontFamily = CooperBTBold, fontSize = 30.sp)
+        Text(text = "Settings", fontFamily = CooperBTBold, fontSize = 30.sp, modifier = Modifier.padding(top = 10.dp))
 
         Column(
             modifier = Modifier
@@ -103,12 +104,30 @@ fun SettingsScreen(){
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(text = "Player 1", fontSize = 20.sp)
-                        Image(
-                            modifier = Modifier
-                                .size(64.dp),
-                            imageVector = Icons.Default.AccountCircle,
-                            contentDescription = "Player 1 Profile Pic"
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(
+                                modifier = Modifier
+                                    .size(64.dp),
+                                imageVector = Icons.Default.AccountCircle,
+                                contentDescription = "Player 1 Profile Pic"
+                            )
+
+                            // Edit profile image button
+                            Button(
+                                onClick = { /*TODO*/ },
+                                modifier = Modifier.size(24.dp),
+                                shape = CircleShape,
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
+                                contentPadding = PaddingValues(1.5.dp)
+                            ){
+                                Icon(
+                                    imageVector = Icons.Default.Create,
+                                    contentDescription = "Settings",
+                                )
+                            }
+                        }
 
                         // Player 1 Name
                         OutlinedTextField(
@@ -128,6 +147,7 @@ fun SettingsScreen(){
                             TextField(
                                 modifier = Modifier.menuAnchor(),
                                 value = playerOneColour,
+                                label = {Text(text = "Colour")},
                                 onValueChange = {},
                                 readOnly = true,
                                 trailingIcon = {ExposedDropdownMenuDefaults.TrailingIcon(expanded = playerOneIsExpanded)}
@@ -157,12 +177,30 @@ fun SettingsScreen(){
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(text = "Player 2", fontSize = 20.sp)
-                        Image(
-                            modifier = Modifier
-                                .size(64.dp),
-                            imageVector = Icons.Default.AccountCircle,
-                            contentDescription = "Player 2 Profile Pic"
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(
+                                modifier = Modifier
+                                    .size(64.dp),
+                                imageVector = Icons.Default.AccountCircle,
+                                contentDescription = "Player 2 Profile Pic"
+                            )
+
+                            //Edit profile image button
+                            Button(
+                                onClick = { /*TODO*/ },
+                                modifier = Modifier.size(24.dp),
+                                shape = CircleShape,
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
+                                contentPadding = PaddingValues(1.5.dp)
+                            ){
+                                Icon(
+                                    imageVector = Icons.Default.Create,
+                                    contentDescription = "Settings",
+                                )
+                            }
+                        }
                         // Player 2 Name
                         OutlinedTextField(
                             value = playerTwoName,
@@ -179,6 +217,7 @@ fun SettingsScreen(){
                         ){
                             TextField(
                                 modifier = Modifier.menuAnchor(),
+                                label = {Text(text = "Colour")},
                                 value = playerTwoColour,
                                 onValueChange = {},
                                 readOnly = true,
@@ -208,7 +247,7 @@ fun SettingsScreen(){
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "sd")
+                Text(text = "Board Size")
             }
 
             //---------- Mode Customisation
@@ -218,7 +257,7 @@ fun SettingsScreen(){
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "sd")
+                Text(text = "Mode")
             }
         }
     }
