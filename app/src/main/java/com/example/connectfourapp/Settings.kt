@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
@@ -351,7 +352,47 @@ fun SettingsScreen(){
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Go back to menu button
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.size(48.dp),
+                    shape = CircleShape,
+                    contentPadding = PaddingValues(1.dp)
+                ) {
 
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back to Menu"
+                    )
+                }
+
+                // Save Button
+                Button(
+                    onClick = { /*TODO*/},
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .size(width = 0.dp, height = 48.dp)
+                    ,
+
+                    contentPadding = PaddingValues(1.dp),
+
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Green,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Done,
+                        contentDescription = "Reset",
+                    )
+                    Spacer(modifier = Modifier
+                        .width(12.dp)
+                    )
+                    Text(
+                        text = "Save"
+                    )
+
+                }
             }
         }
     }
