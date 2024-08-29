@@ -1,5 +1,6 @@
 package com.example.connectfourapp
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -8,7 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,9 +26,16 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,9 +43,33 @@ import androidx.compose.ui.unit.sp
 import com.example.connectfourapp.ui.theme.BoardBlue
 import com.example.connectfourapp.ui.theme.GreyBG
 import com.example.connectfourapp.ui.theme.Righteous
-
 @Composable
 fun GameScreen(){
+
+    // GOT THE CODE FOR CHANGING CODE BASED ON ORIENTATION FROM STACK OVERFLOW:
+    // https://stackoverflow.com/a/67612872/21301692
+    var orientation by remember { mutableStateOf(Configuration.ORIENTATION_PORTRAIT) }
+    val configuration = LocalConfiguration.current
+
+// If our configuration changes then this will launch a new coroutine scope for it
+    LaunchedEffect(configuration) {
+        // Save any changes to the orientation value on the configuration object
+        snapshotFlow { configuration.orientation }
+            .collect { orientation = it }
+    }
+
+    when (orientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> {
+            LandscapeContent()
+        }
+        else -> {
+            PortraitContent()
+        }
+    }
+}
+
+@Composable
+fun PortraitContent(){
     // Column to hold everything in
     Column (
       modifier = Modifier
@@ -115,8 +147,8 @@ fun GameScreen(){
         // Board!
         Box (
             modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
+                // .fillMaxWidth()
+                // .aspectRatio(1f)
                 .background(BoardBlue),
             contentAlignment = Alignment.Center
         ){
@@ -212,6 +244,201 @@ fun GameScreen(){
                 )
 
             }
+        }
+    }
+}
+
+@Composable
+fun LandscapeContent(){
+    // Row to hold everything in
+    Row (
+        modifier = Modifier
+            .fillMaxSize()
+            .background(GreyBG)
+            .padding(20.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        // Info:
+        // - Player Turn
+        // - Player 1 v Player 2 stats
+        // - Moves played/remaining
+        Column (
+            modifier = Modifier
+                .fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ){
+            // Player 1's Turn...
+            Row (
+                // modifier = Modifier
+                // .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Player 1's turn
+                Text(text = "Player 1's Turn...")
+            }
+
+            // Player 1 + stats
+            Row (
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Image(
+                    modifier = Modifier
+                        .size(64.dp),
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Player 1 Profile Pic"
+                )
+
+                Column (
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "Player 1", fontSize = 20.sp)
+                    Text(text = "Wins: 0")
+                    Text(text = "Win Rate: 0%")
+                }
+            }
+            // Vs.
+            Row {
+                Text(text = "vs.", fontFamily = Righteous, fontSize = 40.sp)
+            }
+            // Player 2 + stats
+            Row (
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Image(
+                    modifier = Modifier
+                        .size(64.dp),
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Player 1 Profile Pic"
+                )
+
+                Column (
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "Player 2", fontSize = 20.sp)
+                    Text(text = "Wins: 0")
+                    Text(text = "Win Rate: 0%")
+                }
+            }
+
+            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            )
+            {
+                Column {
+                    // TODO: Make the moves played/remaining variables
+                    Text(text = "Moves played: 0") // moves played
+                    Text(text = "Moves remaining: 42") // moves remaining
+                }
+            }
+
+
+        }
+
+        // Game Board and Buttons
+        Column (
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(400.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            // Board!
+            Box (
+                modifier = Modifier
+                    // .size(300.dp)
+                    // .aspectRatio(1f)
+                    .background(BoardBlue),
+                contentAlignment = Alignment.Center
+            ){
+                GameBoard() // calls Component.GameBoard()
+            }
+
+            // Buttons
+            Row (
+//                modifier = Modifier
+//                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ){
+                // Back to menu
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.size(48.dp),
+                    shape = CircleShape,
+                    contentPadding = PaddingValues(1.dp)
+                ) {
+
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back to Menu"
+                    )
+                }
+
+                // Pause game
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.size(48.dp),
+                    shape = CircleShape,
+                    contentPadding = PaddingValues(1.dp)
+                ) {
+
+                    Icon(
+                        painter = painterResource(R.drawable.baseline_pause),
+                        contentDescription = "Pause"
+                    )
+                }
+
+                // Settings
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.size(48.dp),
+                    shape = CircleShape,
+                    contentPadding = PaddingValues(1.dp)
+                ){
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings",
+                    )
+                }
+
+                // Reset game
+                Button(
+                    onClick = { /*TODO*/},
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .size(width = 0.dp, height = 48.dp)
+                    ,
+
+                    contentPadding = PaddingValues(1.dp),
+
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Red,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Reset",
+                    )
+                    Spacer(modifier = Modifier
+                        .width(12.dp)
+                    )
+                    Text(
+                        text = "Reset Game"
+                    )
+
+                }
+            }
+
         }
     }
 }

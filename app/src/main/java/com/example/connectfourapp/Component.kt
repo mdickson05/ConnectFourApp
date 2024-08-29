@@ -41,7 +41,7 @@ fun Tile()
             containerColor = GreyBG
         ),
         modifier = Modifier
-            .size(45.dp)
+            .size(42.dp)
             .padding(4.dp)
     ) {
 
