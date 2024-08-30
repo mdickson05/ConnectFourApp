@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun MenuScreen() {
-    Box(
+    Box( // Box to align text at button and title and buttons in middle
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White),
@@ -66,10 +66,10 @@ fun MenuScreen() {
                 painter = painterResource(id = R.drawable.titlelogo),
                 contentDescription = null,
                 modifier = Modifier
-                    .width(350.dp) // Adjust the width as desired
-                    .aspectRatio(461f / 262f) // Maintain the original aspect ratio
-                    .background(Color.White), // Use background to test
-                contentScale = ContentScale.Fit // Fit the image within the given bounds
+                    .width(350.dp) //Adjust the title size
+                    .aspectRatio(461f / 262f) // Image aspect ratio DO NOT CHANGE
+                    .background(Color.White), // Changes background colour DO NOT CHANGE
+                contentScale = ContentScale.Fit
             )
 
             Row(
@@ -79,19 +79,20 @@ fun MenuScreen() {
                 horizontalArrangement = Arrangement.Center
 
             ) {
+                //---------- Statistics button
                 Button(
                     onClick = { /*TODO*/ },
                     modifier = Modifier
                         .padding(16.dp),
-                    shape = CircleShape,
-                    //colors = ButtonDefaults.buttonColors(Color.Blue)
+                    colors = ButtonDefaults.buttonColors(Color.DarkGray)
                 ) {
                     Icon(
                         imageVector = Icons.Default.List,
-                        contentDescription = "Stats",
-                        tint = Color.White
+                        contentDescription = "StatsButton",
                     )
                 }
+
+                //---------- Play button
                 Button(
                     onClick = { /*TODO*/ },
                     modifier = Modifier
@@ -101,18 +102,20 @@ fun MenuScreen() {
                 ) {
                     Icon(
                         imageVector = Icons.Default.PlayArrow,
-                        contentDescription = "Start",
+                        contentDescription = "PlayButton",
                     )
                 }
 
+                //---------- Settings Button
                 Button(
                     onClick = { /*TODO*/ },
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(16.dp),
+                    colors = ButtonDefaults.buttonColors(Color.DarkGray)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Settings,
-                        contentDescription = "Settings",
+                        contentDescription = "SettingsButton",
                     )
                 }
             }
