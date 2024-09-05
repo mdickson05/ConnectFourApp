@@ -1,5 +1,6 @@
 package com.example.connectfourapp
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,49 +33,77 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.connectfourapp.ui.theme.CooperBTBold
 import com.example.connectfourapp.ui.theme.GreyBG
+import androidx.compose.runtime.State
+
+// Source for orientation: https://stackoverflow.com/a/67612872/21301692
+@Composable
+fun SettingsScreen(){
+    val settingsState = rememberSettingsState()
+    var orientation by remember { mutableStateOf(Configuration.ORIENTATION_PORTRAIT) }
+    val configuration = LocalConfiguration.current
+
+    // If our configuration changes then this will launch a new coroutine scope for it
+    LaunchedEffect(configuration) {
+        // Save any changes to the orientation value on the configuration object
+        snapshotFlow { configuration.orientation }
+            .collect { orientation = it }
+    }
+
+    when (orientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> {
+            LandscapeContent(settingsState)
+        }
+        else -> {
+            PortraitContent(settingsState)
+        }
+    }
+}
+
+//---------- Single line function to remember the player settings
+@Composable
+fun rememberSettingsState() = remember{ mutableStateOf(SettingsState())} // will remember a changeable state that lies within the data class
+
+//---------- Data class holding key-value pairs of player settings
+data class SettingsState(
+    var playerOneName: String = "Player 1",
+    var playerTwoName: String = "Player 2",
+    var playerOneColour: String = "Red",
+    var playerTwoColour: String = "Yellow",
+    var playerOneIsExpanded: Boolean = false,
+    var playerTwoIsExpanded: Boolean = false,
+    var selectedBoardOption: String = "Standard (7x6)",
+    var selectedModeOption: String = "Single-Player"
+)
+
+//---------- Global variables for different setting options
+val colours = listOf("Red", "Yellow", "Green", "Orange", "Pink")
+val boardOptions = listOf("Small (6x5)", "Standard (7x6)", "Large (8x7)")
+val modeOptions = listOf("Single-Player", "Multiplayer")
+val modeOptionsDesc = listOf("(Player 1 vs. AI)", "(Player 1 vs. Player 2)")
 
 //---------- Settings Screen Layout
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(){
+fun PortraitContent(state: State<SettingsState>){
 
-    // TextView Names Variables
-    var playerOneName by remember { mutableStateOf("Player 1") }
-    var playerTwoName by remember { mutableStateOf("Player 2") }
-
-    // ExposedDropDown Colour Variables
-    val colours = listOf("Red", "Yellow", "Green", "Orange", "Pink") // List of player colours
-    var playerOneColour by remember {mutableStateOf(colours[0])} //Default colour is Red
-    var playerTwoColour by remember { mutableStateOf(colours[1]) } //Default colour is Yellow
-    var playerOneIsExpanded by remember {
-        mutableStateOf(false)
-    }
-    var playerTwoIsExpanded by remember {
-        mutableStateOf(false)
-    }
-
-    // Board Radio Options
-    val boardOptions = listOf("Small (6x5)", "Standard (7x6) ", "Large (8x7)")
-    val (selectedBoardOption, onBoardOptionSelected) = remember { mutableStateOf(boardOptions[1] ) }
-
-    // Game Mode Radio Options
-    val modeOptions = listOf("Single-Player", "Multiplayer")
-    val modeOptionsDesc = listOf("(Player 1 vs. AI)", "(Player 1 vs. Player 2)")
-    val (selectedModeOption, onModeOptionSelected) = remember { mutableStateOf(modeOptions[0] ) }
+    val settingsState = state.value // Access the current state from the state class
 
     Column(
         modifier = Modifier
@@ -137,34 +166,33 @@ fun SettingsScreen(){
 
                         // Player 1 Name
                         OutlinedTextField(
-                            value = playerOneName,
-                            onValueChange = { newPlayerOneName ->
-                                playerOneName = newPlayerOneName
+                            value = settingsState.playerOneName,
+                            onValueChange = { settingsState.playerOneName = it
                             },
                             label = { Text(text = "Player 1 name...") },
                         )
 
                         //Player 1 Colour
                         ExposedDropdownMenuBox(
-                            expanded = playerOneIsExpanded,
-                            onExpandedChange = {playerOneIsExpanded = !playerOneIsExpanded },
+                            expanded = settingsState.playerOneIsExpanded,
+                            onExpandedChange = {settingsState.playerOneIsExpanded = !settingsState.playerOneIsExpanded },
                             modifier = Modifier.padding(top = 8.dp)
                         ){
                             TextField(
                                 modifier = Modifier.menuAnchor(),
-                                value = playerOneColour,
+                                value = settingsState.playerOneColour,
                                 label = {Text(text = "Colour")},
                                 onValueChange = {},
                                 readOnly = true,
-                                trailingIcon = {ExposedDropdownMenuDefaults.TrailingIcon(expanded = playerOneIsExpanded)}
+                                trailingIcon = {ExposedDropdownMenuDefaults.TrailingIcon(expanded = settingsState.playerOneIsExpanded)}
                             )
-                            ExposedDropdownMenu(expanded = playerOneIsExpanded, onDismissRequest = { playerOneIsExpanded = false }) {
+                            ExposedDropdownMenu(expanded = settingsState.playerOneIsExpanded, onDismissRequest = { settingsState.playerOneIsExpanded = false }) {
                                 colours.forEachIndexed { index, text ->
                                     DropdownMenuItem(
                                         text = { Text(text = text) },
                                         onClick = {
-                                            playerOneColour = colours[index]
-                                            playerOneIsExpanded = false
+                                            settingsState.playerOneColour = colours[index]
+                                            settingsState.playerOneIsExpanded = false
                                         },
                                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
                                     )
@@ -209,33 +237,31 @@ fun SettingsScreen(){
                         }
                         // Player 2 Name
                         OutlinedTextField(
-                            value = playerTwoName,
-                            onValueChange = { newPlayerTwoName ->
-                                playerTwoName = newPlayerTwoName
-                            },
+                            value = settingsState.playerTwoName,
+                            onValueChange = { settingsState.playerTwoName = it },
                             label = { Text(text = "Player 2 name...") },
                         )
 
                         ExposedDropdownMenuBox(
-                            expanded = playerTwoIsExpanded,
-                            onExpandedChange = {playerTwoIsExpanded = !playerTwoIsExpanded },
+                            expanded = settingsState.playerTwoIsExpanded,
+                            onExpandedChange = {settingsState.playerTwoIsExpanded = !settingsState.playerTwoIsExpanded },
                             modifier = Modifier.padding(top = 8.dp)
                         ){
                             TextField(
                                 modifier = Modifier.menuAnchor(),
                                 label = {Text(text = "Colour")},
-                                value = playerTwoColour,
+                                value = settingsState.playerTwoColour,
                                 onValueChange = {},
                                 readOnly = true,
-                                trailingIcon = {ExposedDropdownMenuDefaults.TrailingIcon(expanded = playerTwoIsExpanded)}
+                                trailingIcon = {ExposedDropdownMenuDefaults.TrailingIcon(expanded = settingsState.playerTwoIsExpanded)}
                             )
-                            ExposedDropdownMenu(expanded = playerTwoIsExpanded, onDismissRequest = { playerTwoIsExpanded = false }) {
+                            ExposedDropdownMenu(expanded = settingsState.playerTwoIsExpanded, onDismissRequest = { settingsState.playerTwoIsExpanded = false }) {
                                 colours.forEachIndexed { index, text ->
                                     DropdownMenuItem(
                                         text = { Text(text = text) },
                                         onClick = {
-                                            playerTwoColour = colours[index]
-                                            playerTwoIsExpanded = false
+                                            settingsState.playerTwoColour = colours[index]
+                                            settingsState.playerTwoIsExpanded = false
                                         },
                                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
                                     )
@@ -264,9 +290,9 @@ fun SettingsScreen(){
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
                                 .selectable(
-                                    selected = (text == selectedBoardOption),
+                                    selected = (text == settingsState.selectedBoardOption),
                                     onClick = {
-                                        onBoardOptionSelected(text)
+                                        settingsState.selectedBoardOption = text
                                     }
                                 )
                         ) {
@@ -279,8 +305,8 @@ fun SettingsScreen(){
                                 contentScale = ContentScale.Crop
                             )
                             RadioButton(
-                                selected = (text == selectedBoardOption),
-                                onClick = { onBoardOptionSelected(text) }
+                                selected = (text == settingsState.selectedBoardOption),
+                                onClick = { settingsState.selectedBoardOption = text }
                             )
                             Text(
                                 text = text,
@@ -308,9 +334,9 @@ fun SettingsScreen(){
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
                                 .selectable(
-                                    selected = (text == selectedModeOption),
+                                    selected = (text == settingsState.selectedModeOption),
                                     onClick = {
-                                        onModeOptionSelected(text)
+                                        settingsState.selectedModeOption = text
                                     }
                                 )
                         ) {
@@ -323,8 +349,8 @@ fun SettingsScreen(){
                                 contentScale = ContentScale.Crop
                             )
                             RadioButton(
-                                selected = (text == selectedModeOption),
-                                onClick = { onModeOptionSelected(text) }
+                                selected = (text == settingsState.selectedModeOption),
+                                onClick = { settingsState.selectedModeOption = text }
                             )
                             Text(
                                 text = text,
@@ -389,6 +415,12 @@ fun SettingsScreen(){
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LandscapeContent(state: State<SettingsState>){
+
 }
 
 //---------- Preview
