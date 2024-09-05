@@ -12,3 +12,6 @@ val Pink40 = Color(0xFF7D5260)
 
 val BoardBlue = Color(0xFF3160E7)
 val GreyBG = Color(0xFFf5f7f6)
+
+val PinkDisc = Color(0xFFFFC0CB)
+val OrangeDisc = Color(0xFFFFA500)

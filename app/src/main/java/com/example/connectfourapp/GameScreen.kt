@@ -1,20 +1,28 @@
 package com.example.connectfourapp
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -44,14 +52,15 @@ import com.example.connectfourapp.ui.theme.BoardBlue
 import com.example.connectfourapp.ui.theme.GreyBG
 import com.example.connectfourapp.ui.theme.Righteous
 @Composable
-fun GameScreen(){
-
+fun GameScreen(
+    viewModel: GameViewModel
+){
     // GOT THE CODE FOR CHANGING CODE BASED ON ORIENTATION FROM STACK OVERFLOW:
     // https://stackoverflow.com/a/67612872/21301692
     var orientation by remember { mutableStateOf(Configuration.ORIENTATION_PORTRAIT) }
     val configuration = LocalConfiguration.current
 
-// If our configuration changes then this will launch a new coroutine scope for it
+    // If our configuration changes then this will launch a new coroutine scope for it
     LaunchedEffect(configuration) {
         // Save any changes to the orientation value on the configuration object
         snapshotFlow { configuration.orientation }
@@ -60,16 +69,19 @@ fun GameScreen(){
 
     when (orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
-            LandscapeContent()
+            LandscapeContent(viewModel)
         }
         else -> {
-            PortraitContent()
+            PortraitContent(viewModel)
         }
     }
 }
 
 @Composable
-fun PortraitContent(){
+fun PortraitContent(
+    viewModel: GameViewModel
+){
+    val state = viewModel.state
     // Column to hold everything in
     Column (
       modifier = Modifier
@@ -133,15 +145,14 @@ fun PortraitContent(){
             }
         }
 
-
+        // Current Turn Text
         Row (
             modifier = Modifier
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Player 1's turn
-            Text(text = "Player 1's Turn...")
+            Text(text = state.turnText)
         }
 
         // Board!
@@ -151,10 +162,47 @@ fun PortraitContent(){
                 // .aspectRatio(1f)
                 .background(BoardBlue),
             contentAlignment = Alignment.Center
-        ){
-            GameBoard() // calls Component.GameBoard()
-        }
+        ) {
+            LazyVerticalGrid(
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    // aspect ratio HAS to be cols/rows!
+                    .aspectRatio(state.cols.toFloat() / viewModel.state.rows.toFloat()),
+                columns = GridCells.Fixed(state.cols)
 
+            ) {
+                viewModel.boardItems.forEach { (cellNum, playerType) ->
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(1f)
+                                .clickable(
+                                    interactionSource = MutableInteractionSource(),
+                                    indication = null
+                                ) {
+                                    viewModel.onAction(GameUserAction.BoardTapped(cellNum))
+                                },
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            AnimatedVisibility(
+                                visible = playerType != PlayerType.NONE,
+                                enter = scaleIn(tween(1000))
+                            ) {
+                                when (playerType) {
+                                    PlayerType.ONE -> Disc(playerColour = PlayerColour.RED)
+                                    PlayerType.TWO -> Disc(playerColour = PlayerColour.YELLOW)
+                                    PlayerType.AI -> Disc(playerColour = PlayerColour.ORANGE)
+                                    PlayerType.NONE -> {}
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
         // Moves remaining/played
         Row(
             modifier = Modifier
@@ -219,7 +267,10 @@ fun PortraitContent(){
 
             // Reset game
             Button(
-                onClick = { /*TODO*/},
+                onClick = {
+                    viewModel.onAction(GameUserAction.ResetButtonClicked)
+
+                },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .size(width = 0.dp, height = 48.dp)
@@ -249,7 +300,10 @@ fun PortraitContent(){
 }
 
 @Composable
-fun LandscapeContent(){
+fun LandscapeContent(
+    viewModel: GameViewModel
+){
+    val state = viewModel.state
     // Row to hold everything in
     Row (
         modifier = Modifier
@@ -270,15 +324,14 @@ fun LandscapeContent(){
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ){
-            // Player 1's Turn...
+            // Current turn text
             Row (
                 // modifier = Modifier
                 // .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Player 1's turn
-                Text(text = "Player 1's Turn...")
+                Text(text = state.turnText)
             }
 
             // Player 1 + stats
@@ -359,7 +412,45 @@ fun LandscapeContent(){
                     .background(BoardBlue),
                 contentAlignment = Alignment.Center
             ){
-                GameBoard() // calls Component.GameBoard()
+                LazyVerticalGrid(
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        // aspect ratio HAS to be cols/rows!
+                        .aspectRatio(state.cols.toFloat() / viewModel.state.rows.toFloat()),
+                    columns = GridCells.Fixed(state.cols)
+
+                ) {
+                    viewModel.boardItems.forEach { (cellNum, playerType) ->
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(1f)
+                                    .clickable(
+                                        interactionSource = MutableInteractionSource(),
+                                        indication = null
+                                    ) {
+                                        viewModel.onAction(GameUserAction.BoardTapped(cellNum))
+                                    },
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                AnimatedVisibility(
+                                    visible = playerType != PlayerType.NONE,
+                                    enter = scaleIn(tween(1000))
+                                ) {
+                                    when (playerType) {
+                                        PlayerType.ONE -> Disc(playerColour = PlayerColour.RED)
+                                        PlayerType.TWO -> Disc(playerColour = PlayerColour.YELLOW)
+                                        PlayerType.AI -> Disc(playerColour = PlayerColour.ORANGE)
+                                        PlayerType.NONE -> {}
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
             }
 
             // Buttons
@@ -412,7 +503,9 @@ fun LandscapeContent(){
 
                 // Reset game
                 Button(
-                    onClick = { /*TODO*/},
+                    onClick = {
+                        viewModel.onAction(GameUserAction.ResetButtonClicked)
+                    },
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
                         .size(width = 0.dp, height = 48.dp)
@@ -446,5 +539,5 @@ fun LandscapeContent(){
 @Preview
 @Composable
 fun Prev(){
-    GameScreen()
+    GameScreen(viewModel = GameViewModel())
 }
