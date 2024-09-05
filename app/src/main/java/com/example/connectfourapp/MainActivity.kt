@@ -36,6 +36,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +44,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ConnectFourAppTheme {
-                MenuScreen()
+                // MenuScreen()
+                val viewModel = viewModel<GameViewModel>()
+                GameScreen(
+                    viewModel = viewModel
+                )
             }
         }
     }
