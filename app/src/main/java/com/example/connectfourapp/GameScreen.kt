@@ -267,7 +267,10 @@ fun PortraitContent(
 
             // Reset game
             Button(
-                onClick = { /*TODO*/},
+                onClick = {
+                    viewModel.onAction(GameUserAction.ResetButtonClicked)
+
+                },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .size(width = 0.dp, height = 48.dp)
@@ -409,7 +412,6 @@ fun LandscapeContent(
                     .background(BoardBlue),
                 contentAlignment = Alignment.Center
             ){
-                // GameBoard() // calls Component.GameBoard()
                 LazyVerticalGrid(
                     modifier = Modifier
                         .fillMaxWidth(0.9f)
@@ -501,7 +503,9 @@ fun LandscapeContent(
 
                 // Reset game
                 Button(
-                    onClick = { /*TODO*/},
+                    onClick = {
+                        viewModel.onAction(GameUserAction.ResetButtonClicked)
+                    },
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
                         .size(width = 0.dp, height = 48.dp)
