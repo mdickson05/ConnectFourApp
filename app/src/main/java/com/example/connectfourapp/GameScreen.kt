@@ -166,7 +166,7 @@ fun PortraitContent(
             LazyVerticalGrid(
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
-                    // aspect ratio HAS to be cols/rows!
+                    // aspect ratio HAS to be cols / rows!
                     .aspectRatio(state.cols.toFloat() / viewModel.state.rows.toFloat()),
                 columns = GridCells.Fixed(state.cols)
 
@@ -197,6 +197,7 @@ fun PortraitContent(
                                     PlayerType.NONE -> {}
                                 }
                             }
+                            Disc()
 
                         }
                     }
