@@ -1,7 +1,5 @@
 package com.example.connectfourapp
 
-import com.example.connectfourapp.ui.theme.GreyBG
-
 data class GameState(
     // num rows and columns
     // TODO: Make a map between SettingState BoardSize enums and rows/cols
