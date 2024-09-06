@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -103,9 +104,9 @@ val modeOptionsDesc = listOf("(Player 1 vs. AI)", "(Player 1 vs. Player 2)")
 //---------- Settings Screen Layout
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PortraitContent(state: State<SettingsState>){
+fun PortraitContent(state: MutableState<SettingsState>){
 
-    val settingsState = state.value // Access the current state from the state class
+    val settingsState by state // Access the current state from the state class
 
     Column(
         modifier = Modifier
@@ -169,15 +170,18 @@ fun PortraitContent(state: State<SettingsState>){
                         // Player 1 Name
                         OutlinedTextField(
                             value = settingsState.playerOneName,
-                            onValueChange = { settingsState.playerOneName = it
+                            onValueChange = { newName ->
+                                state.value = settingsState.copy(playerOneName = newName)
                             },
                             label = { Text(text = "Player 1 name...") },
                         )
 
-                        //Player 1 Colour
+                        // Player 1 Colour
                         ExposedDropdownMenuBox(
                             expanded = settingsState.playerOneIsExpanded,
-                            onExpandedChange = {settingsState.playerOneIsExpanded = !settingsState.playerOneIsExpanded },
+                            onExpandedChange = {
+                                state.value = settingsState.copy(playerOneIsExpanded = !settingsState.playerOneIsExpanded)
+                            },
                             modifier = Modifier.padding(top = 8.dp)
                         ){
                             TextField(
@@ -188,13 +192,18 @@ fun PortraitContent(state: State<SettingsState>){
                                 readOnly = true,
                                 trailingIcon = {ExposedDropdownMenuDefaults.TrailingIcon(expanded = settingsState.playerOneIsExpanded)}
                             )
-                            ExposedDropdownMenu(expanded = settingsState.playerOneIsExpanded, onDismissRequest = { settingsState.playerOneIsExpanded = false }) {
+                            ExposedDropdownMenu(
+                                expanded = settingsState.playerOneIsExpanded,
+                                onDismissRequest = { state.value = settingsState.copy(playerOneIsExpanded = false) }
+                            ) {
                                 colours.forEachIndexed { index, text ->
                                     DropdownMenuItem(
                                         text = { Text(text = text) },
                                         onClick = {
-                                            settingsState.playerOneColour = colours[index]
-                                            settingsState.playerOneIsExpanded = false
+                                            state.value = settingsState.copy(
+                                                playerOneColour = colours[index],
+                                                playerOneIsExpanded = false
+                                            )
                                         },
                                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
                                     )
@@ -240,41 +249,52 @@ fun PortraitContent(state: State<SettingsState>){
                         // Player 2 Name
                         OutlinedTextField(
                             value = settingsState.playerTwoName,
-                            onValueChange = { settingsState.playerTwoName = it },
+                            onValueChange = { newName ->
+                                state.value = settingsState.copy(playerTwoName = newName)
+                            },
                             label = { Text(text = "Player 2 name...") },
                         )
 
+                        // Player 2 Colour
                         ExposedDropdownMenuBox(
                             expanded = settingsState.playerTwoIsExpanded,
-                            onExpandedChange = {settingsState.playerTwoIsExpanded = !settingsState.playerTwoIsExpanded },
+                            onExpandedChange = {
+                                state.value = settingsState.copy(playerTwoIsExpanded = !settingsState.playerTwoIsExpanded)
+                            },
                             modifier = Modifier.padding(top = 8.dp)
-                        ){
+                        ) {
                             TextField(
                                 modifier = Modifier.menuAnchor(),
-                                label = {Text(text = "Colour")},
                                 value = settingsState.playerTwoColour,
+                                label = { Text(text = "Colour") },
                                 onValueChange = {},
                                 readOnly = true,
-                                trailingIcon = {ExposedDropdownMenuDefaults.TrailingIcon(expanded = settingsState.playerTwoIsExpanded)}
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = settingsState.playerTwoIsExpanded) }
                             )
-                            ExposedDropdownMenu(expanded = settingsState.playerTwoIsExpanded, onDismissRequest = { settingsState.playerTwoIsExpanded = false }) {
+                            ExposedDropdownMenu(
+                                expanded = settingsState.playerTwoIsExpanded,
+                                onDismissRequest = { state.value = settingsState.copy(playerTwoIsExpanded = false) }
+                            ) {
                                 colours.forEachIndexed { index, text ->
                                     DropdownMenuItem(
                                         text = { Text(text = text) },
                                         onClick = {
-                                            settingsState.playerTwoColour = colours[index]
-                                            settingsState.playerTwoIsExpanded = false
+                                            state.value = settingsState.copy(
+                                                playerTwoColour = colours[index],
+                                                playerTwoIsExpanded = false
+                                            )
                                         },
                                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
                                     )
                                 }
                             }
                         }
+
                     }
                 }
             }
 
-            //---------- Board Customisation
+            // Board Customisation
             Column(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -294,7 +314,7 @@ fun PortraitContent(state: State<SettingsState>){
                                 .selectable(
                                     selected = (text == settingsState.selectedBoardOption),
                                     onClick = {
-                                        settingsState.selectedBoardOption = text
+                                        state.value = settingsState.copy(selectedBoardOption = text)
                                     }
                                 )
                         ) {
@@ -308,7 +328,7 @@ fun PortraitContent(state: State<SettingsState>){
                             )
                             RadioButton(
                                 selected = (text == settingsState.selectedBoardOption),
-                                onClick = { settingsState.selectedBoardOption = text }
+                                onClick = { state.value = settingsState.copy(selectedBoardOption = text) }
                             )
                             Text(
                                 text = text,
@@ -318,7 +338,7 @@ fun PortraitContent(state: State<SettingsState>){
                 }
             }
 
-            //---------- Mode Customisation
+            // Mode Customisation
             Column(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -338,7 +358,7 @@ fun PortraitContent(state: State<SettingsState>){
                                 .selectable(
                                     selected = (text == settingsState.selectedModeOption),
                                     onClick = {
-                                        settingsState.selectedModeOption = text
+                                        state.value = settingsState.copy(selectedModeOption = text)
                                     }
                                 )
                         ) {
@@ -352,7 +372,7 @@ fun PortraitContent(state: State<SettingsState>){
                             )
                             RadioButton(
                                 selected = (text == settingsState.selectedModeOption),
-                                onClick = { settingsState.selectedModeOption = text }
+                                onClick = { state.value = settingsState.copy(selectedModeOption = text) }
                             )
                             Text(
                                 text = text,
