@@ -10,10 +10,12 @@ data class GameState(
     val playerOneWinCount: Int = 0,
     val playerTwoWinCount: Int = 0,
     val drawCount: Int = 0,
+    val gamesPlayed: Int = 0,
+    val movesMade: Int = 0,
 
     // Player Info
-    val PlayerOneColour: PlayerColour = PlayerColour.RED,
-    val PlayerTwoColour: PlayerColour = PlayerColour.YELLOW,
+    val playerOneColour: PlayerColour = PlayerColour.RED,
+    val playerTwoColour: PlayerColour = PlayerColour.YELLOW,
 
 
     // Turn Info
@@ -24,7 +26,10 @@ data class GameState(
     // Victory Info
     val victoryType: VictoryType = VictoryType.NONE,
     val victoryPos: Int = 0,
-    val hasWon: Boolean = false
+    val hasWon: Boolean = false,
+
+    // Game mode
+    val gameMode: GameMode = GameMode.MULTI
 )
 
 enum class PlayerType {
@@ -47,4 +52,9 @@ enum class PlayerColour {
     GREEN,
     ORANGE,
     PINK
+}
+
+enum class GameMode {
+    SINGLE,
+    MULTI
 }
