@@ -1,6 +1,5 @@
 package com.example.connectfourapp
 
-import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -37,7 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -53,6 +52,7 @@ import com.example.connectfourapp.ui.theme.BoardBlue
 import com.example.connectfourapp.ui.theme.GreyBG
 import com.example.connectfourapp.ui.theme.Righteous
 import kotlinx.coroutines.delay
+import java.util.Locale
 
 @Composable
 fun GameScreen(
@@ -60,7 +60,7 @@ fun GameScreen(
 ){
     // GOT THE CODE FOR CHANGING CODE BASED ON ORIENTATION FROM STACK OVERFLOW:
     // https://stackoverflow.com/a/67612872/21301692
-    var orientation by remember { mutableStateOf(Configuration.ORIENTATION_PORTRAIT) }
+    var orientation by remember { mutableIntStateOf(Configuration.ORIENTATION_PORTRAIT) }
     val configuration = LocalConfiguration.current
 
     // If our configuration changes then this will launch a new coroutine scope for it
@@ -128,7 +128,7 @@ fun PortraitContent(
                     horizontalAlignment = Alignment.Start
                 ) {
                     val winRate: Double = (state.playerOneWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
-                    val formattedWinRate = String.format("%.1f", winRate)  // Rounds to 1 decimal place
+                    val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
                     Text(text = "Player 1", fontSize = 20.sp)
                     Text(text = "Wins: " + state.playerOneWinCount)
                     Text(text = "Win Rate: $formattedWinRate%")
@@ -156,7 +156,7 @@ fun PortraitContent(
                     if(state.gameMode == GameMode.MULTI)
                     {
                         val winRate: Double = (state.playerTwoWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
-                        val formattedWinRate = String.format("%.1f", winRate)  // Rounds to 1 decimal place
+                        val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
                         Text(text = "Player 2", fontSize = 20.sp)
                         Text(text = "Wins: " + state.playerTwoWinCount)
                         Text(text = "Win Rate: $formattedWinRate%")
@@ -164,7 +164,7 @@ fun PortraitContent(
                     else
                     {
                         val winRate: Double = (state.aiWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
-                        val formattedWinRate = String.format("%.1f", winRate)  // Rounds to 1 decimal place
+                        val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
                         Text(text = "AI", fontSize = 20.sp)
                         Text(text = "Wins: " + state.aiWinCount)
                         Text(text = "Win Rate: $formattedWinRate%")
@@ -244,7 +244,7 @@ fun PortraitContent(
         {
             val movesRemaining: Int = (state.rows * state.cols) - state.movesMade
             Text(text = "Moves played: " + state.movesMade) // moves played
-            Text(text = "Moves remaining: " + movesRemaining) // moves remaining
+            Text(text = "Moves remaining: $movesRemaining") // moves remaining
         }
 
         // Buttons
@@ -390,7 +390,7 @@ fun LandscapeContent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     val winRate: Double = (state.playerOneWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
-                    val formattedWinRate = String.format("%.1f", winRate)  // Rounds to 1 decimal place
+                    val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
                     Text(text = "Player 1", fontSize = 20.sp)
                     Text(text = "Wins: " + state.playerOneWinCount)
                     Text(text = "Win Rate: $formattedWinRate%")
@@ -418,7 +418,7 @@ fun LandscapeContent(
                     if(state.gameMode == GameMode.MULTI)
                     {
                         val winRate: Double = (state.playerTwoWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
-                        val formattedWinRate = String.format("%.1f", winRate)  // Rounds to 1 decimal place
+                        val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
                         Text(text = "Player 2", fontSize = 20.sp)
                         Text(text = "Wins: " + state.playerTwoWinCount)
                         Text(text = "Win Rate: $formattedWinRate%")
@@ -426,7 +426,7 @@ fun LandscapeContent(
                     else
                     {
                         val winRate: Double = (state.aiWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
-                        val formattedWinRate = String.format("%.1f", winRate)  // Rounds to 1 decimal place
+                        val formattedWinRate = String.format(Locale.ENGLISH,"%.1f", winRate)  // Rounds to 1 decimal place
                         Text(text = "AI", fontSize = 20.sp)
                         Text(text = "Wins: " + state.aiWinCount)
                         Text(text = "Win Rate: $formattedWinRate%")
@@ -444,7 +444,7 @@ fun LandscapeContent(
                 Column {
                     val movesRemaining: Int = (state.rows * state.cols) - state.movesMade
                     Text(text = "Moves played: " + state.movesMade) // moves played
-                    Text(text = "Moves remaining: " + movesRemaining) // moves remaining
+                    Text(text = "Moves remaining: $movesRemaining") // moves remaining
                 }
             }
 
