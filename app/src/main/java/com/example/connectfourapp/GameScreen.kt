@@ -114,9 +114,10 @@ fun PortraitContent(
                 Column (
                     horizontalAlignment = Alignment.Start
                 ) {
+                    val winRate: Double = (state.playerOneWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
                     Text(text = "Player 1", fontSize = 20.sp)
-                    Text(text = "Wins: 0")
-                    Text(text = "Win Rate: 0%")
+                    Text(text = "Wins: " + state.playerOneWinCount)
+                    Text(text = "Win Rate: " + winRate + "%")
                 }
             }
             // Vs.
@@ -132,15 +133,16 @@ fun PortraitContent(
                     modifier = Modifier
                         .size(64.dp),
                     imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Player 1 Profile Pic"
+                    contentDescription = "Player 2 Profile Pic"
                 )
 
                 Column (
                     horizontalAlignment = Alignment.End
                 ) {
+                    val winRate: Double = (state.playerTwoWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
                     Text(text = "Player 2", fontSize = 20.sp)
-                    Text(text = "Wins: 0")
-                    Text(text = "Win Rate: 0%")
+                    Text(text = "Wins: " + state.playerTwoWinCount)
+                    Text(text = "Win Rate: " + winRate + "%")
                 }
             }
         }
@@ -212,10 +214,9 @@ fun PortraitContent(
             verticalAlignment = Alignment.CenterVertically
         )
         {
-            // TODO: Make the moves played/remaining variables
-
-            Text(text = "Moves played: 0") // moves played
-            Text(text = "Moves remaining: 42") // moves remaining
+            val movesRemaining: Int = (state.rows * state.cols) - state.movesMade
+            Text(text = "Moves played: " + state.movesMade) // moves played
+            Text(text = "Moves remaining: " + movesRemaining) // moves remaining
         }
 
         // Buttons
@@ -350,9 +351,10 @@ fun LandscapeContent(
                 Column (
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    val winRate: Double = (state.playerOneWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
                     Text(text = "Player 1", fontSize = 20.sp)
-                    Text(text = "Wins: 0")
-                    Text(text = "Win Rate: 0%")
+                    Text(text = "Wins: " + state.playerOneWinCount)
+                    Text(text = "Win Rate: " + winRate + "%")
                 }
             }
             // Vs.
@@ -368,15 +370,16 @@ fun LandscapeContent(
                     modifier = Modifier
                         .size(64.dp),
                     imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Player 1 Profile Pic"
+                    contentDescription = "Player 2 Profile Pic"
                 )
 
                 Column (
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    val winRate: Double = (state.playerTwoWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
                     Text(text = "Player 2", fontSize = 20.sp)
-                    Text(text = "Wins: 0")
-                    Text(text = "Win Rate: 0%")
+                    Text(text = "Wins: " + state.playerTwoWinCount)
+                    Text(text = "Win Rate: " + winRate + "%")
                 }
             }
 
@@ -388,9 +391,9 @@ fun LandscapeContent(
             )
             {
                 Column {
-                    // TODO: Make the moves played/remaining variables
-                    Text(text = "Moves played: 0") // moves played
-                    Text(text = "Moves remaining: 42") // moves remaining
+                    val movesRemaining: Int = (state.rows * state.cols) - state.movesMade
+                    Text(text = "Moves played: " + state.movesMade) // moves played
+                    Text(text = "Moves remaining: " + movesRemaining) // moves remaining
                 }
             }
 
@@ -447,6 +450,7 @@ fun LandscapeContent(
                                         PlayerType.NONE -> {}
                                     }
                                 }
+                                Disc()
 
                             }
                         }
@@ -536,6 +540,7 @@ fun LandscapeContent(
         }
     }
 }
+
 
 @Preview
 @Composable
