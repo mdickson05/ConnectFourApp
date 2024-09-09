@@ -24,7 +24,7 @@ class GameViewModel : ViewModel() {
                 gameReset()
             }
             GameUserAction.AIMove -> {
-                val move: Int = GenerateAIMove()
+                val move: Int = generateAIMove()
 
                 boardItems[move] = PlayerType.AI
                 state = state.copy(
@@ -284,7 +284,7 @@ class GameViewModel : ViewModel() {
         return state.gameMode == GameMode.SINGLE
     }
 
-    private fun GenerateAIMove(): Int {
+    private fun generateAIMove(): Int {
         val limit: Int = state.rows * state.cols
         var move: Int = (1..limit).random()
         var checked: Boolean = checkMove(move)
