@@ -9,6 +9,7 @@ data class GameState(
     // Stats tracking
     val playerOneWinCount: Int = 0,
     val playerTwoWinCount: Int = 0,
+    val aiWinCount: Int = 0,
     val drawCount: Int = 0,
     val gamesPlayed: Int = 0,
     val movesMade: Int = 0,
@@ -29,7 +30,7 @@ data class GameState(
     val hasWon: Boolean = false,
 
     // Game mode
-    val gameMode: GameMode = GameMode.MULTI
+    val gameMode: GameMode = GameMode.SINGLE
 )
 
 enum class PlayerType {
