@@ -10,8 +10,8 @@ class SettingsViewModel : ViewModel() {
     // these are to be accessed by the game screen...
     var playerOneName by mutableStateOf("Player 1")
     var playerTwoName by mutableStateOf("Player 2")
-    var playerOneColour by mutableStateOf("Player 1")
-    var playerTwoColour by mutableStateOf("Player 2")
+    var playerOneColour by mutableStateOf("Red")
+    var playerTwoColour by mutableStateOf("Yellow")
     var playerOneIsExpanded by mutableStateOf(false)
     var playerTwoIsExpanded by mutableStateOf(false)
     var selectedBoardOption by mutableStateOf("Standard (7x6)")
