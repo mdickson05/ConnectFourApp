@@ -23,6 +23,44 @@ class GameViewModel : ViewModel() {
             GameUserAction.ResetButtonClicked -> {
                 gameReset()
             }
+            GameUserAction.AIMove -> {
+                val move: Int = generateAIMove()
+
+                boardItems[move] = PlayerType.AI
+                state = state.copy(
+                    movesMade = state.movesMade + 1
+                )
+
+                // STEP 2: Check if P1 has won the game
+                if(checkForVictory(PlayerType.AI))
+                {
+                    state = state.copy(
+                        turnText = "AI wins",
+                        aiWinCount = state.aiWinCount + 1,
+                        currentTurn = PlayerType.NONE,
+                        hasWon = true,
+                        gamesPlayed = state.gamesPlayed + 1
+                    )
+                }
+
+                // STEP 3: Check if game is now drawn
+                else if(hasBoardFull()) {
+                    state = state.copy (
+                        turnText = "Game Draw",
+                        drawCount =  state.drawCount + 1,
+                        gamesPlayed = state.gamesPlayed + 1
+                    )
+                }
+
+                // STEP 4: Generate AI move
+                else {
+                    state = state.copy (
+                        turnText = "Player 1's Turn...",
+                        currentTurn = PlayerType.ONE
+                    )
+                }
+            }
+
         }
     }
 
@@ -55,7 +93,44 @@ class GameViewModel : ViewModel() {
             // IF SINGLE PLAYER
             if(isSinglePlayer())
             {
+                // STEP 1: Player makes the turn
+                boardItems[cellNum] = PlayerType.ONE
+                state = state.copy(
+                    movesMade = state.movesMade + 1
+                )
+
+                // STEP 2: Check if P1 has won the game
+                if(checkForVictory(PlayerType.ONE))
+                {
+                    state = state.copy(
+                        turnText = "Player 1 wins",
+                        playerOneWinCount = state.playerOneWinCount + 1,
+                        currentTurn = PlayerType.NONE,
+                        hasWon = true,
+                        gamesPlayed = state.gamesPlayed + 1
+                    )
+                }
+
+                // STEP 3: Check if game is now drawn
+                else if(hasBoardFull()) {
+                    state = state.copy (
+                        turnText = "Game Draw",
+                        drawCount =  state.drawCount + 1,
+                        gamesPlayed = state.gamesPlayed + 1
+                    )
+                }
+
+                // STEP 4: Generate AI move
+                else {
+                    state = state.copy (
+                        turnText = "AI's Turn...",
+                        currentTurn = PlayerType.AI
+                    )
+                }
+
                 // do nothing, functionality to be added
+                // make our turn THEN do the AI turn
+
             }
             // IF Multiplayer
             else {
@@ -95,7 +170,6 @@ class GameViewModel : ViewModel() {
                             currentTurn = PlayerType.TWO
                         )
                     }
-
                 }
 
                 // IF it is player 2's turn...
@@ -209,5 +283,38 @@ class GameViewModel : ViewModel() {
     private fun isSinglePlayer(): Boolean {
         return state.gameMode == GameMode.SINGLE
     }
+
+    private fun generateAIMove(): Int {
+        val limit: Int = state.rows * state.cols
+        var move: Int = (1..limit).random()
+        var checked: Boolean = checkMove(move)
+
+        // while boardItems == NONE OR (move is not in bottom row AND boardItems in the row below == NONE)
+        while(!checked)
+        {
+            move = (1..limit).random()
+            checked = checkMove(move)
+        }
+
+        return move
+    }
+
+    private fun checkMove(move: Int): Boolean {
+        val limit: Int = state.rows * state.cols
+
+        // Check if the current move position is empty
+        if (boardItems[move] != PlayerType.NONE) {
+            return false // Position is already taken
+        }
+
+        // If move is in the bottom row, it's valid as long as it's empty
+        if (move > limit - state.cols) {
+            return true
+        }
+
+        // If move is not in the bottom row, check if the position below is filled
+        return boardItems[move + state.cols] != PlayerType.NONE
+    }
+
 
 }
