@@ -305,7 +305,7 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
     }
 
     private fun isSinglePlayer(): Boolean {
-        return state.gameMode == GameMode.SINGLE
+        return state.gameMode == SharedEnums.GameMode.SINGLE
     }
 
     private fun generateAIMove(): Int {

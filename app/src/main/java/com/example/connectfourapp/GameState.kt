@@ -3,8 +3,10 @@ package com.example.connectfourapp
 data class GameState(
     // num rows and columns
     // TODO: Make a map between SettingState BoardSize enums and rows/cols
-    val rows: Int = 6,
-    val cols: Int = 7,
+
+    val boardSize: SharedEnums.BoardSize = SharedEnums.BoardSize.STANDARD,
+    val rows: Int = getRows(boardSize),
+    val cols: Int = getCols(boardSize),
 
     // Stats tracking
     val playerOneWinCount: Int = 0,
@@ -17,8 +19,8 @@ data class GameState(
     // Player Info
     val playerOneName: String = "Player 1",
     val playerTwoName: String = "Player 2",
-    val playerOneColour: PlayerColour = PlayerColour.RED,
-    val playerTwoColour: PlayerColour = PlayerColour.YELLOW,
+    val playerOneColour: SharedEnums.PlayerColour = SharedEnums.PlayerColour.RED,
+    val playerTwoColour: SharedEnums.PlayerColour = SharedEnums.PlayerColour.YELLOW,
 
 
     // Turn Info
@@ -32,9 +34,28 @@ data class GameState(
     val hasWon: Boolean = false,
 
     // Game mode
-    val gameMode: GameMode = GameMode.SINGLE
+    val gameMode: SharedEnums.GameMode = SharedEnums.GameMode.SINGLE
 )
 
+private fun getRows(boardSize: SharedEnums.BoardSize) : Int {
+    val rows = when(boardSize) {
+        SharedEnums.BoardSize.SMALL -> 5
+        SharedEnums.BoardSize.STANDARD -> 6
+        SharedEnums.BoardSize.LARGE -> 7
+    }
+    return rows
+}
+
+private fun getCols(boardSize: SharedEnums.BoardSize) : Int {
+    val cols = when(boardSize) {
+        SharedEnums.BoardSize.SMALL -> 6
+        SharedEnums.BoardSize.STANDARD -> 7
+        SharedEnums.BoardSize.LARGE -> 8
+    }
+    return cols
+}
+
+// Locally used
 enum class PlayerType {
     ONE,
     TWO,
@@ -47,17 +68,4 @@ enum class VictoryType {
     HORIZONTAL,
     VERTICAL,
     DIAGONAL
-}
-
-enum class PlayerColour {
-    RED,
-    YELLOW,
-    GREEN,
-    ORANGE,
-    PINK
-}
-
-enum class GameMode {
-    SINGLE,
-    MULTI
 }

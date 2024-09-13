@@ -132,7 +132,11 @@ fun PortraitContent(
                     val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
                     Text(text = state.playerOneName, fontSize = 20.sp)
                     Text(text = "Wins: " + state.playerOneWinCount)
-                    Text(text = "Win Rate: $formattedWinRate%")
+                    if(state.gamesPlayed != 0)
+                    {
+                        Text(text = "Win Rate: $formattedWinRate%")
+                    }
+
                 }
             }
             // Vs.
@@ -154,13 +158,16 @@ fun PortraitContent(
                 Column (
                     horizontalAlignment = Alignment.End
                 ) {
-                    if(state.gameMode == GameMode.MULTI)
+                    if(state.gameMode == SharedEnums.GameMode.MULTI)
                     {
                         val winRate: Double = (state.playerTwoWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
                         val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
                         Text(text = state.playerTwoName, fontSize = 20.sp)
                         Text(text = "Wins: " + state.playerTwoWinCount)
-                        Text(text = "Win Rate: $formattedWinRate%")
+                        if(state.gamesPlayed != 0)
+                        {
+                            Text(text = "Win Rate: $formattedWinRate%")
+                        }
                     }
                     else
                     {
@@ -168,7 +175,10 @@ fun PortraitContent(
                         val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
                         Text(text = "AI", fontSize = 20.sp)
                         Text(text = "Wins: " + state.aiWinCount)
-                        Text(text = "Win Rate: $formattedWinRate%")
+                        if(state.gamesPlayed != 0)
+                        {
+                            Text(text = "Win Rate: $formattedWinRate%")
+                        }
                     }
                 }
             }
@@ -222,9 +232,9 @@ fun PortraitContent(
                                 enter = scaleIn(tween(1000))
                             ) {
                                 when (playerType) {
-                                    PlayerType.ONE -> Disc(playerColour = PlayerColour.RED)
-                                    PlayerType.TWO -> Disc(playerColour = PlayerColour.YELLOW)
-                                    PlayerType.AI -> Disc(playerColour = PlayerColour.ORANGE)
+                                    PlayerType.ONE -> Disc(playerColour = SharedEnums.PlayerColour.RED)
+                                    PlayerType.TWO -> Disc(playerColour = SharedEnums.PlayerColour.YELLOW)
+                                    PlayerType.AI -> Disc(playerColour = SharedEnums.PlayerColour.ORANGE)
                                     PlayerType.NONE -> {}
                                 }
                             }
@@ -394,7 +404,10 @@ fun LandscapeContent(
                     val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
                     Text(text = state.playerOneName, fontSize = 20.sp)
                     Text(text = "Wins: " + state.playerOneWinCount)
-                    Text(text = "Win Rate: $formattedWinRate%")
+                    if(state.gamesPlayed != 0)
+                    {
+                        Text(text = "Win Rate: $formattedWinRate%")
+                    }
                 }
             }
             // Vs.
@@ -416,13 +429,16 @@ fun LandscapeContent(
                 Column (
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if(state.gameMode == GameMode.MULTI)
+                    if(state.gameMode == SharedEnums.GameMode.MULTI)
                     {
                         val winRate: Double = (state.playerTwoWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
                         val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
                         Text(text = state.playerTwoName, fontSize = 20.sp)
                         Text(text = "Wins: " + state.playerTwoWinCount)
-                        Text(text = "Win Rate: $formattedWinRate%")
+                        if(state.gamesPlayed != 0)
+                        {
+                            Text(text = "Win Rate: $formattedWinRate%")
+                        }
                     }
                     else
                     {
@@ -430,7 +446,10 @@ fun LandscapeContent(
                         val formattedWinRate = String.format(Locale.ENGLISH,"%.1f", winRate)  // Rounds to 1 decimal place
                         Text(text = "AI", fontSize = 20.sp)
                         Text(text = "Wins: " + state.aiWinCount)
-                        Text(text = "Win Rate: $formattedWinRate%")
+                        if(state.gamesPlayed != 0)
+                        {
+                            Text(text = "Win Rate: $formattedWinRate%")
+                        }
                     }
                 }
             }
@@ -498,9 +517,9 @@ fun LandscapeContent(
                                     enter = scaleIn(tween(1000))
                                 ) {
                                     when (playerType) {
-                                        PlayerType.ONE -> Disc(playerColour = PlayerColour.RED)
-                                        PlayerType.TWO -> Disc(playerColour = PlayerColour.YELLOW)
-                                        PlayerType.AI -> Disc(playerColour = PlayerColour.ORANGE)
+                                        PlayerType.ONE -> Disc(playerColour = SharedEnums.PlayerColour.RED)
+                                        PlayerType.TWO -> Disc(playerColour = SharedEnums.PlayerColour.YELLOW)
+                                        PlayerType.AI -> Disc(playerColour = SharedEnums.PlayerColour.ORANGE)
                                         PlayerType.NONE -> {}
                                     }
                                 }
