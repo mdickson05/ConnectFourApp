@@ -100,12 +100,40 @@ fun PortraitContent(
         verticalArrangement = Arrangement.Top
     ) {
 
-        Text(
-            text = "Settings",
-            fontFamily = CooperBTBold,
-            fontSize = 30.sp,
-            modifier = Modifier.padding(top = 10.dp)
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth().padding(top = 30.dp),
+            horizontalArrangement = Arrangement.Start, // Align items to the start of the Row
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Go back to menu button
+            Button(
+                onClick = { /*TODO*/ },
+                modifier = Modifier.size(36.dp),
+                shape = CircleShape,
+                contentPadding = PaddingValues(1.dp),
+                colors = ButtonDefaults.buttonColors(Color.DarkGray)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back to Menu"
+                )
+            }
+
+            // Spacer that fills the remaining space between the button and title
+            Spacer(modifier = Modifier.weight(.8f))
+
+            //Title
+            Text(
+                text = "Settings",
+                fontFamily = CooperBTBold,
+                fontSize = 30.sp,
+
+            )
+
+            // Spacer to balance the remaining space on the right
+            Spacer(modifier = Modifier.weight(1f))
+        }
 
         Column(
             modifier = Modifier
@@ -358,50 +386,6 @@ fun PortraitContent(
                     }
                 }
             }
-
-            // Option Buttons
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Go back to menu button
-                Button(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier.size(48.dp),
-                    shape = CircleShape,
-                    contentPadding = PaddingValues(1.dp)
-                ) {
-
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back to Menu"
-                    )
-                }
-
-                // Save Button
-                Button(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .fillMaxWidth(0.8f)
-                        .size(width = 0.dp, height = 48.dp),
-                    contentPadding = PaddingValues(1.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Green,
-                        contentColor = Color.White
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Done,
-                        contentDescription = "Save",
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = "Save"
-                    )
-                }
-            }
         }
     }
 }
@@ -447,7 +431,8 @@ fun LandscapeContent(
                         onClick = { /*TODO*/ },
                         modifier = Modifier.size(36.dp),
                         shape = CircleShape,
-                        contentPadding = PaddingValues(1.dp)
+                        contentPadding = PaddingValues(1.dp),
+                        colors = ButtonDefaults.buttonColors(Color.DarkGray)
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
@@ -731,26 +716,6 @@ fun LandscapeContent(
                             }
                         }
                     }
-
-                    // Save Button
-                    Button(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier
-                            .fillMaxWidth(0.75f)
-                            .size(width = 0.dp, height = 24.dp),
-                        contentPadding = PaddingValues(1.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Green,
-                            contentColor = Color.White
-                        )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Done,
-                            contentDescription = "Save",
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(text = "Save")
-                    }
                 }
             }
         }
@@ -764,18 +729,3 @@ fun SettingsPrev(){
     val viewModel = viewModel<SettingsViewModel>()
     SettingsScreen(viewModel = viewModel)
 }
-
-//@Preview(name = "Portrait")
-//@Composable
-//fun SettingsPreviewPortrait() {
-//    SettingsScreen()
-//}
-
-//@Preview(name = "Landscape", device = "spec:shape=Normal,width=840,height=400,unit=dp,dpi=440")
-//@Composable
-//fun SettingsPreviewLandscape() {
-//    val configuration = Configuration().apply {
-//        orientation = Configuration.ORIENTATION_LANDSCAPE
-//    }
-//    SettingsScreen()
-//}
