@@ -96,7 +96,6 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
             movesMade = 0,
             turnText = "${state.playerOneName}'s turn...",
             currentTurn = PlayerType.ONE,
-            victoryType = VictoryType.NONE,
             hasWon = false
         )
     }
@@ -250,7 +249,6 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
         for (row in 0 until state.rows) {
             for (col in 0 until state.cols - 3) {
                 if (checkLine(player, row, col, 0, 1)) {
-                    state = state.copy(victoryType = VictoryType.HORIZONTAL, victoryPos = getIndex(row, col))
                     return true
                 }
             }
@@ -260,7 +258,6 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
         for (row in 0 until state.rows - 3) {
             for (col in 0 until state.cols) {
                 if (checkLine(player, row, col, 1, 0)) {
-                    state = state.copy(victoryType = VictoryType.VERTICAL, victoryPos = getIndex(row, col))
                     return true
                 }
             }
@@ -270,7 +267,6 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
         for (row in 0 until state.rows - 3) {
             for (col in 0 until state.cols - 3) {
                 if (checkLine(player, row, col, 1, 1)) {
-                    state = state.copy(victoryType = VictoryType.DIAGONAL, victoryPos = getIndex(row, col))
                     return true
                 }
             }
@@ -280,7 +276,6 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
         for (row in 0 until state.rows - 3) {
             for (col in 3 until state.cols) {
                 if (checkLine(player, row, col, 1, -1)) {
-                    state = state.copy(victoryType = VictoryType.DIAGONAL, victoryPos = getIndex(row, col))
                     return true
                 }
             }
