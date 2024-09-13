@@ -45,26 +45,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             ConnectFourAppTheme {
                 // MenuScreen()
-                //val settingsViewModel = viewModel<SettingsViewModel>()
-                val configuration = LocalConfiguration.current
-                val orientation = configuration.orientation
-
-                // Example of how you might handle back navigation
-                val onBackClick: () -> Unit = {
-                    // Handle back navigation here
-                }
-
-                StatsScreen(
-                    //orientation = orientation,
-                    onBackClick = onBackClick
-                )
 //                SettingsScreen(
 //                    viewModel = settingsViewModel
 //                )
-//                val settingsViewModel: SettingsViewModel = viewModel()
-//                val gameViewModel: GameViewModel = viewModel { GameViewModel(settingsViewModel) }
-//                GameScreen(viewModel = gameViewModel)
-
+                // val settingsViewModel: SettingsViewModel = viewModel()
+                // val gameViewModel: GameViewModel = viewModel { GameViewModel(settingsViewModel) }
+                // GameScreen(viewModel = gameViewModel)
+                StatsScreen()
             }
         }
     }
