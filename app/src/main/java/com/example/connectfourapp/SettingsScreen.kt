@@ -21,7 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -80,8 +79,19 @@ fun SettingsScreen(
 
 //---------- Global variables for different setting options/text options
 val colours = listOf("Red", "Yellow", "Green", "Orange", "Pink")
-val boardOptions = listOf("Small (6x5)", "Standard (7x6)", "Large (8x7)")
-val modeOptions = listOf("Single-Player", "Multiplayer")
+val boardOptions = SharedEnums.BoardSize.entries.map {
+    when (it) {
+        SharedEnums.BoardSize.SMALL -> "Small (6x5)"
+        SharedEnums.BoardSize.STANDARD -> "Standard (7x6)"
+        SharedEnums.BoardSize.LARGE -> "Large (8x7)"
+    }
+}
+val modeOptions = SharedEnums.GameMode.entries.map {
+    when (it) {
+        SharedEnums.GameMode.SINGLE -> "Single-Player"
+        SharedEnums.GameMode.MULTI -> "Multiplayer"
+    }
+}
 val modeOptionsDesc = listOf("(Player 1 vs. AI)", "(Player 1 vs. Player 2)")
 
 //---------- Settings Screen Layout
@@ -198,7 +208,7 @@ fun PortraitContent(
                         ) {
                             TextField(
                                 modifier = Modifier.menuAnchor(),
-                                value = viewModel.playerOneColour,
+                                value = viewModel.playerOneColour.name.uppercase(),
                                 label = { Text(text = "Colour") },
                                 onValueChange = {},
                                 readOnly = true,
@@ -271,7 +281,7 @@ fun PortraitContent(
                         ) {
                             TextField(
                                 modifier = Modifier.menuAnchor(),
-                                value = viewModel.playerTwoColour,
+                                value = viewModel.playerTwoColour.name.uppercase(),
                                 label = { Text(text = "Colour") },
                                 onValueChange = {},
                                 readOnly = true,
@@ -312,13 +322,13 @@ fun PortraitContent(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    boardOptions.forEach { text ->
+                    boardOptions.forEachIndexed { index, text ->
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
                                 .selectable(
-                                    selected = (text == viewModel.selectedBoardOption),
-                                    onClick = { viewModel.updateSelectedBoardOption(text) }
+                                    selected = (SharedEnums.BoardSize.entries[index] == viewModel.selectedBoardOption),
+                                    onClick = { viewModel.updateSelectedBoardOption(SharedEnums.BoardSize.entries[index]) }
                                 )
                         ) {
                             Image(
@@ -330,8 +340,8 @@ fun PortraitContent(
                                 contentScale = ContentScale.Crop
                             )
                             RadioButton(
-                                selected = (text == viewModel.selectedBoardOption),
-                                onClick = { viewModel.updateSelectedBoardOption(text) }
+                                selected = (SharedEnums.BoardSize.entries[index] == viewModel.selectedBoardOption),
+                                onClick = { viewModel.updateSelectedBoardOption(SharedEnums.BoardSize.entries[index]) }
                             )
                             Text(
                                 text = text,
@@ -359,8 +369,8 @@ fun PortraitContent(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
                                 .selectable(
-                                    selected = (text == viewModel.selectedModeOption),
-                                    onClick = { viewModel.updateSelectedModeOption(text) }
+                                    selected = (SharedEnums.GameMode.entries[index] == viewModel.selectedModeOption),
+                                    onClick = { viewModel.updateSelectedModeOption(SharedEnums.GameMode.entries[index]) }
                                 )
                         ) {
                             Image(
@@ -372,8 +382,8 @@ fun PortraitContent(
                                 contentScale = ContentScale.Crop
                             )
                             RadioButton(
-                                selected = (text == viewModel.selectedModeOption),
-                                onClick = { viewModel.updateSelectedModeOption(text) }
+                                selected = (SharedEnums.GameMode.entries[index] == viewModel.selectedModeOption),
+                                onClick = { viewModel.updateSelectedModeOption(SharedEnums.GameMode.entries[index]) }
                             )
                             Text(
                                 text = text,
@@ -501,7 +511,7 @@ fun LandscapeContent(
                                 ) {
                                     TextField(
                                         modifier = Modifier.menuAnchor(),
-                                        value = viewModel.playerOneColour,
+                                        value = viewModel.playerOneColour.name.uppercase(),
                                         label = { Text(text = "Colour") },
                                         onValueChange = {},
                                         readOnly = true,
@@ -577,7 +587,7 @@ fun LandscapeContent(
                                         TextField(
                                             modifier = Modifier.menuAnchor(),
                                             label = { Text(text = "Colour") },
-                                            value = viewModel.playerTwoColour,
+                                            value = viewModel.playerTwoColour.name.uppercase(),
                                             onValueChange = {},
                                             readOnly = true,
                                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.playerTwoIsExpanded) }
@@ -639,13 +649,13 @@ fun LandscapeContent(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            boardOptions.forEach { text ->
+                            boardOptions.forEachIndexed { index, text ->
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     modifier = Modifier
                                         .selectable(
-                                            selected = (text == viewModel.selectedBoardOption),
-                                            onClick = { viewModel.updateSelectedBoardOption(text) }
+                                            selected = (SharedEnums.BoardSize.entries[index] == viewModel.selectedBoardOption),
+                                            onClick = { viewModel.updateSelectedBoardOption(SharedEnums.BoardSize.entries[index]) }
                                         )
                                 ) {
                                     Image(
@@ -657,8 +667,8 @@ fun LandscapeContent(
                                         contentScale = ContentScale.Crop
                                     )
                                     RadioButton(
-                                        selected = (text == viewModel.selectedBoardOption),
-                                        onClick = { viewModel.updateSelectedBoardOption(text) }
+                                        selected = (SharedEnums.BoardSize.entries[index] == viewModel.selectedBoardOption),
+                                        onClick = { viewModel.updateSelectedBoardOption(SharedEnums.BoardSize.entries[index]) }
                                     )
                                     Text(text = text)
                                 }
@@ -691,8 +701,8 @@ fun LandscapeContent(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     modifier = Modifier
                                         .selectable(
-                                            selected = (text == viewModel.selectedModeOption),
-                                            onClick = { viewModel.updateSelectedModeOption(text) }
+                                            selected = (SharedEnums.GameMode.entries[index] == viewModel.selectedModeOption),
+                                            onClick = { viewModel.updateSelectedModeOption(SharedEnums.GameMode.entries[index]) }
                                         )
                                 ) {
                                     Image(
@@ -704,8 +714,8 @@ fun LandscapeContent(
                                         contentScale = ContentScale.Crop
                                     )
                                     RadioButton(
-                                        selected = (text == viewModel.selectedModeOption),
-                                        onClick = { viewModel.updateSelectedModeOption(text) }
+                                        selected = (SharedEnums.GameMode.entries[index] == viewModel.selectedModeOption),
+                                        onClick = { viewModel.updateSelectedModeOption(SharedEnums.GameMode.entries[index]) }
                                     )
                                     Text(text = text)
                                     Text(

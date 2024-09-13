@@ -14,12 +14,20 @@ class SettingsViewModel : ViewModel() {
     var playerTwoIsExpanded by mutableStateOf(false)
 
     // To be converted into using enums
-    var playerOneColour by mutableStateOf("Red")
-    var playerTwoColour by mutableStateOf("Yellow")
-    var selectedBoardOption by mutableStateOf("Standard (7x6)")
-    var selectedModeOption by mutableStateOf("Single-Player")
+    var playerOneColour by mutableStateOf(SharedEnums.PlayerColour.RED)
+    var playerTwoColour by mutableStateOf(SharedEnums.PlayerColour.YELLOW)
+    var selectedBoardOption by mutableStateOf(SharedEnums.BoardSize.STANDARD)
+    var selectedModeOption by mutableStateOf(SharedEnums.GameMode.MULTI)
 
     //---------- Mutators
+    fun updatePlayerOneIsExpanded(){ // Toggles if Player one drop down menu is down or not
+        playerOneIsExpanded = !playerOneIsExpanded // Opposite of what it is
+    }
+
+    fun updatePlayerTwoIsExpanded(){
+        playerTwoIsExpanded = !playerTwoIsExpanded
+    }
+
     fun updatePlayerOneName(name : String){
         playerOneName = name
     }
@@ -29,26 +37,18 @@ class SettingsViewModel : ViewModel() {
     }
 
     fun updatePlayerOneColour(colour : String){
-        playerOneColour = colour
+        playerOneColour = SharedEnums.PlayerColour.valueOf(colour.uppercase())
     }
 
     fun updatePlayerTwoColour(colour : String){
-        playerTwoColour = colour
+        playerOneColour = SharedEnums.PlayerColour.valueOf(colour.uppercase())
     }
 
-    fun updatePlayerOneIsExpanded(){ // Toggles if Player one drop down menu is down or not
-        playerOneIsExpanded = !playerOneIsExpanded // Opposite of what it is
-    }
-
-    fun updatePlayerTwoIsExpanded(){
-        playerTwoIsExpanded = !playerTwoIsExpanded
-    }
-
-    fun updateSelectedBoardOption(option : String){
+    fun updateSelectedBoardOption(option : SharedEnums.BoardSize){
         selectedBoardOption = option
     }
 
-    fun updateSelectedModeOption(option : String){
+    fun updateSelectedModeOption(option : SharedEnums.GameMode){
         selectedModeOption = option
     }
 

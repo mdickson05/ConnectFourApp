@@ -24,16 +24,12 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
 
         state = state.copy(
             playerOneName = settingsViewModel.playerOneName,
-            playerTwoName = settingsViewModel.playerTwoName
-
-            // playerOneColour = settingsViewModel.playerOneColour,
-            // playerTwoColour = settingsViewModel.playerTwoColour,
-            // gameMode = settingsViewModel.gameMode,
-            // boardSize = settingsViewModel.boardSize
-
+            playerTwoName = settingsViewModel.playerTwoName,
+            playerOneColour = settingsViewModel.playerOneColour,
+            playerTwoColour = settingsViewModel.playerTwoColour,
+            gameMode = settingsViewModel.selectedModeOption,
+            boardSize = settingsViewModel.selectedBoardOption
         )
-
-
         return state
     }
 
