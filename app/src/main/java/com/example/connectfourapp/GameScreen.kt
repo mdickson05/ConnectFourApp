@@ -48,6 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.connectfourapp.ui.theme.BoardBlue
 import com.example.connectfourapp.ui.theme.GreyBG
 import com.example.connectfourapp.ui.theme.Righteous
@@ -121,7 +122,7 @@ fun PortraitContent(
                     modifier = Modifier
                         .size(64.dp),
                     imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Player 1 Profile Pic"
+                    contentDescription = "${state.playerOneName} Profile Pic"
                 )
 
                 Column (
@@ -129,7 +130,7 @@ fun PortraitContent(
                 ) {
                     val winRate: Double = (state.playerOneWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
                     val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
-                    Text(text = "Player 1", fontSize = 20.sp)
+                    Text(text = state.playerOneName, fontSize = 20.sp)
                     Text(text = "Wins: " + state.playerOneWinCount)
                     Text(text = "Win Rate: $formattedWinRate%")
                 }
@@ -147,7 +148,7 @@ fun PortraitContent(
                     modifier = Modifier
                         .size(64.dp),
                     imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Player 2/AI Profile Pic"
+                    contentDescription = "${state.playerTwoName}}/AI Profile Pic"
                 )
 
                 Column (
@@ -157,7 +158,7 @@ fun PortraitContent(
                     {
                         val winRate: Double = (state.playerTwoWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
                         val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
-                        Text(text = "Player 2", fontSize = 20.sp)
+                        Text(text = state.playerTwoName, fontSize = 20.sp)
                         Text(text = "Wins: " + state.playerTwoWinCount)
                         Text(text = "Win Rate: $formattedWinRate%")
                     }
@@ -383,7 +384,7 @@ fun LandscapeContent(
                     modifier = Modifier
                         .size(64.dp),
                     imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Player 1 Profile Pic"
+                    contentDescription = "${state.playerOneName} Profile Pic"
                 )
 
                 Column (
@@ -391,7 +392,7 @@ fun LandscapeContent(
                 ) {
                     val winRate: Double = (state.playerOneWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
                     val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
-                    Text(text = "Player 1", fontSize = 20.sp)
+                    Text(text = state.playerOneName, fontSize = 20.sp)
                     Text(text = "Wins: " + state.playerOneWinCount)
                     Text(text = "Win Rate: $formattedWinRate%")
                 }
@@ -409,7 +410,7 @@ fun LandscapeContent(
                     modifier = Modifier
                         .size(64.dp),
                     imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Player 2 Profile Pic"
+                    contentDescription = "${state.playerTwoName}/AI Profile Pic"
                 )
 
                 Column (
@@ -419,7 +420,7 @@ fun LandscapeContent(
                     {
                         val winRate: Double = (state.playerTwoWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
                         val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
-                        Text(text = "Player 2", fontSize = 20.sp)
+                        Text(text = state.playerTwoName, fontSize = 20.sp)
                         Text(text = "Wins: " + state.playerTwoWinCount)
                         Text(text = "Win Rate: $formattedWinRate%")
                     }
@@ -598,5 +599,7 @@ fun LandscapeContent(
 @Preview
 @Composable
 fun Prev(){
-    GameScreen(viewModel = GameViewModel())
+    val settingsViewModel: SettingsViewModel = viewModel()
+    val gameViewModel: GameViewModel = viewModel { GameViewModel(settingsViewModel) }
+    GameScreen(viewModel = gameViewModel)
 }

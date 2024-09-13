@@ -15,12 +15,14 @@ data class GameState(
     val movesMade: Int = 0,
 
     // Player Info
+    val playerOneName: String = "Player 1",
+    val playerTwoName: String = "Player 2",
     val playerOneColour: PlayerColour = PlayerColour.RED,
     val playerTwoColour: PlayerColour = PlayerColour.YELLOW,
 
 
     // Turn Info
-    val turnText: String = "Player 1's Turn...",
+    val turnText: String = "${playerOneName}'s Turn...",
     val currentTurn: PlayerType = PlayerType.ONE,
 
 
