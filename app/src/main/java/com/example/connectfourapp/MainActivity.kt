@@ -44,10 +44,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             ConnectFourAppTheme {
                 // MenuScreen()
-                val viewModel = viewModel<GameViewModel>()
-                GameScreen(
+                val viewModel = viewModel<SettingsViewModel>()
+                SettingsScreen(
                     viewModel = viewModel
                 )
+//                val viewModel = viewModel<GameViewModel>()
+//                GameScreen(
+//                    viewModel = viewModel
+//                )
             }
         }
     }
