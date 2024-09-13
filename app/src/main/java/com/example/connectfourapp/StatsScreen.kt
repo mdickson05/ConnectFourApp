@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,7 +22,16 @@ import androidx.compose.ui.unit.sp
 import com.example.connectfourapp.ui.theme.CooperBTBold
 
 @Composable
-fun StatsScreen(orientation: Int, onBackClick: () -> Unit = {}) {
+fun StatsScreen(onBackClick: () -> Unit = {}) {
+    val configuration = LocalConfiguration.current
+    var orientation by remember { mutableStateOf(configuration.orientation) }
+
+    // Update orientation state when the configuration changes
+    LaunchedEffect(configuration) {
+        snapshotFlow { configuration.orientation }
+            .collect { orientation = it }
+    }
+
     when (orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> LandscapeStatsContent(onBackClick)
         else -> PortraitStatsContent(onBackClick)
@@ -237,12 +247,12 @@ fun PlayerStatsLandscape(playerName: String) {
 @Preview(name = "Portrait", showBackground = true)
 @Composable
 fun PortraitStatsPreview() {
-    StatsScreen(orientation = Configuration.ORIENTATION_PORTRAIT)
+    StatsScreen(onBackClick = {})
 }
 
 @Preview(name = "Landscape", showBackground = true, widthDp = 720, heightDp = 360)
 @Composable
 fun LandscapeStatsPreview() {
-    StatsScreen(orientation = Configuration.ORIENTATION_LANDSCAPE)
+    StatsScreen(onBackClick = {})
 }
 
