@@ -48,6 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.connectfourapp.ui.theme.BoardBlue
 import com.example.connectfourapp.ui.theme.GreyBG
 import com.example.connectfourapp.ui.theme.Righteous
@@ -121,7 +122,7 @@ fun PortraitContent(
                     modifier = Modifier
                         .size(64.dp),
                     imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Player 1 Profile Pic"
+                    contentDescription = "${state.playerOneName} Profile Pic"
                 )
 
                 Column (
@@ -129,9 +130,13 @@ fun PortraitContent(
                 ) {
                     val winRate: Double = (state.playerOneWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
                     val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
-                    Text(text = "Player 1", fontSize = 20.sp)
+                    Text(text = state.playerOneName, fontSize = 20.sp)
                     Text(text = "Wins: " + state.playerOneWinCount)
-                    Text(text = "Win Rate: $formattedWinRate%")
+                    if(state.gamesPlayed != 0)
+                    {
+                        Text(text = "Win Rate: $formattedWinRate%")
+                    }
+
                 }
             }
             // Vs.
@@ -147,19 +152,22 @@ fun PortraitContent(
                     modifier = Modifier
                         .size(64.dp),
                     imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Player 2/AI Profile Pic"
+                    contentDescription = "${state.playerTwoName}}/AI Profile Pic"
                 )
 
                 Column (
                     horizontalAlignment = Alignment.End
                 ) {
-                    if(state.gameMode == GameMode.MULTI)
+                    if(state.gameMode == SharedEnums.GameMode.MULTI)
                     {
                         val winRate: Double = (state.playerTwoWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
                         val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
-                        Text(text = "Player 2", fontSize = 20.sp)
+                        Text(text = state.playerTwoName, fontSize = 20.sp)
                         Text(text = "Wins: " + state.playerTwoWinCount)
-                        Text(text = "Win Rate: $formattedWinRate%")
+                        if(state.gamesPlayed != 0)
+                        {
+                            Text(text = "Win Rate: $formattedWinRate%")
+                        }
                     }
                     else
                     {
@@ -167,7 +175,10 @@ fun PortraitContent(
                         val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
                         Text(text = "AI", fontSize = 20.sp)
                         Text(text = "Wins: " + state.aiWinCount)
-                        Text(text = "Win Rate: $formattedWinRate%")
+                        if(state.gamesPlayed != 0)
+                        {
+                            Text(text = "Win Rate: $formattedWinRate%")
+                        }
                     }
                 }
             }
@@ -221,9 +232,9 @@ fun PortraitContent(
                                 enter = scaleIn(tween(1000))
                             ) {
                                 when (playerType) {
-                                    PlayerType.ONE -> Disc(playerColour = PlayerColour.RED)
-                                    PlayerType.TWO -> Disc(playerColour = PlayerColour.YELLOW)
-                                    PlayerType.AI -> Disc(playerColour = PlayerColour.ORANGE)
+                                    PlayerType.ONE -> Disc(playerColour = SharedEnums.PlayerColour.RED)
+                                    PlayerType.TWO -> Disc(playerColour = SharedEnums.PlayerColour.YELLOW)
+                                    PlayerType.AI -> Disc(playerColour = SharedEnums.PlayerColour.ORANGE)
                                     PlayerType.NONE -> {}
                                 }
                             }
@@ -383,7 +394,7 @@ fun LandscapeContent(
                     modifier = Modifier
                         .size(64.dp),
                     imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Player 1 Profile Pic"
+                    contentDescription = "${state.playerOneName} Profile Pic"
                 )
 
                 Column (
@@ -391,9 +402,12 @@ fun LandscapeContent(
                 ) {
                     val winRate: Double = (state.playerOneWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
                     val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
-                    Text(text = "Player 1", fontSize = 20.sp)
+                    Text(text = state.playerOneName, fontSize = 20.sp)
                     Text(text = "Wins: " + state.playerOneWinCount)
-                    Text(text = "Win Rate: $formattedWinRate%")
+                    if(state.gamesPlayed != 0)
+                    {
+                        Text(text = "Win Rate: $formattedWinRate%")
+                    }
                 }
             }
             // Vs.
@@ -409,19 +423,22 @@ fun LandscapeContent(
                     modifier = Modifier
                         .size(64.dp),
                     imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Player 2 Profile Pic"
+                    contentDescription = "${state.playerTwoName}/AI Profile Pic"
                 )
 
                 Column (
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if(state.gameMode == GameMode.MULTI)
+                    if(state.gameMode == SharedEnums.GameMode.MULTI)
                     {
                         val winRate: Double = (state.playerTwoWinCount.toDouble() / state.gamesPlayed.toDouble()) * 100
                         val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
-                        Text(text = "Player 2", fontSize = 20.sp)
+                        Text(text = state.playerTwoName, fontSize = 20.sp)
                         Text(text = "Wins: " + state.playerTwoWinCount)
-                        Text(text = "Win Rate: $formattedWinRate%")
+                        if(state.gamesPlayed != 0)
+                        {
+                            Text(text = "Win Rate: $formattedWinRate%")
+                        }
                     }
                     else
                     {
@@ -429,7 +446,10 @@ fun LandscapeContent(
                         val formattedWinRate = String.format(Locale.ENGLISH,"%.1f", winRate)  // Rounds to 1 decimal place
                         Text(text = "AI", fontSize = 20.sp)
                         Text(text = "Wins: " + state.aiWinCount)
-                        Text(text = "Win Rate: $formattedWinRate%")
+                        if(state.gamesPlayed != 0)
+                        {
+                            Text(text = "Win Rate: $formattedWinRate%")
+                        }
                     }
                 }
             }
@@ -497,9 +517,9 @@ fun LandscapeContent(
                                     enter = scaleIn(tween(1000))
                                 ) {
                                     when (playerType) {
-                                        PlayerType.ONE -> Disc(playerColour = PlayerColour.RED)
-                                        PlayerType.TWO -> Disc(playerColour = PlayerColour.YELLOW)
-                                        PlayerType.AI -> Disc(playerColour = PlayerColour.ORANGE)
+                                        PlayerType.ONE -> Disc(playerColour = SharedEnums.PlayerColour.RED)
+                                        PlayerType.TWO -> Disc(playerColour = SharedEnums.PlayerColour.YELLOW)
+                                        PlayerType.AI -> Disc(playerColour = SharedEnums.PlayerColour.ORANGE)
                                         PlayerType.NONE -> {}
                                     }
                                 }
@@ -598,5 +618,7 @@ fun LandscapeContent(
 @Preview
 @Composable
 fun Prev(){
-    GameScreen(viewModel = GameViewModel())
+    val settingsViewModel: SettingsViewModel = viewModel()
+    val gameViewModel: GameViewModel = viewModel { GameViewModel(settingsViewModel) }
+    GameScreen(viewModel = gameViewModel)
 }

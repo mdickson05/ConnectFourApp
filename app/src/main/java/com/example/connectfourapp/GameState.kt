@@ -1,10 +1,11 @@
 package com.example.connectfourapp
 
 data class GameState(
-    // num rows and columns
-    // TODO: Make a map between SettingState BoardSize enums and rows/cols
-    val rows: Int = 6,
-    val cols: Int = 7,
+
+    // Determine num of rows and cols based on board size
+    val boardSize: SharedEnums.BoardSize = SharedEnums.BoardSize.STANDARD,
+    val rows: Int = getRows(boardSize),
+    val cols: Int = getCols(boardSize),
 
     // Stats tracking
     val playerOneWinCount: Int = 0,
@@ -15,47 +16,47 @@ data class GameState(
     val movesMade: Int = 0,
 
     // Player Info
-    val playerOneColour: PlayerColour = PlayerColour.RED,
-    val playerTwoColour: PlayerColour = PlayerColour.YELLOW,
+    val playerOneName: String = "Player 1",
+    val playerTwoName: String = "Player 2",
+    val playerOneColour: SharedEnums.PlayerColour = SharedEnums.PlayerColour.RED,
+    val playerTwoColour: SharedEnums.PlayerColour = SharedEnums.PlayerColour.YELLOW,
 
 
     // Turn Info
-    val turnText: String = "Player 1's Turn...",
+    val turnText: String = "${playerOneName}'s Turn...",
     val currentTurn: PlayerType = PlayerType.ONE,
 
-
     // Victory Info
-    val victoryType: VictoryType = VictoryType.NONE,
-    val victoryPos: Int = 0,
     val hasWon: Boolean = false,
 
     // Game mode
-    val gameMode: GameMode = GameMode.SINGLE
+    val gameMode: SharedEnums.GameMode = SharedEnums.GameMode.SINGLE
 )
 
+// Function which converts boardSize enums into respective row integers
+private fun getRows(boardSize: SharedEnums.BoardSize) : Int {
+    val rows = when(boardSize) {
+        SharedEnums.BoardSize.SMALL -> 5
+        SharedEnums.BoardSize.STANDARD -> 6
+        SharedEnums.BoardSize.LARGE -> 7
+    }
+    return rows
+}
+
+// Function which converts boardSize enums into respective column integers
+private fun getCols(boardSize: SharedEnums.BoardSize) : Int {
+    val cols = when(boardSize) {
+        SharedEnums.BoardSize.SMALL -> 6
+        SharedEnums.BoardSize.STANDARD -> 7
+        SharedEnums.BoardSize.LARGE -> 8
+    }
+    return cols
+}
+
+// Locally used - no need to be included in SharedEnums
 enum class PlayerType {
     ONE,
     TWO,
     AI,
     NONE
-}
-
-enum class VictoryType {
-    NONE,
-    HORIZONTAL,
-    VERTICAL,
-    DIAGONAL
-}
-
-enum class PlayerColour {
-    RED,
-    YELLOW,
-    GREEN,
-    ORANGE,
-    PINK
-}
-
-enum class GameMode {
-    SINGLE,
-    MULTI
 }

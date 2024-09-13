@@ -5,13 +5,36 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
-class GameViewModel : ViewModel() {
-    var state by mutableStateOf(GameState())
+class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewModel() {
+
+    var state by mutableStateOf(generateState())
 
     val boardItems: MutableMap<Int, PlayerType> = generateBoardItems()
 
     private fun generateBoardItems(): MutableMap<Int, PlayerType> {
         return (1..(state.rows * state.cols)).associateWith { PlayerType.NONE }.toMutableMap()
+    }
+
+    private fun generateState() : GameState
+    {
+        // Set state to GameState defaults
+        var state by mutableStateOf(GameState())
+
+        // Update GameState based on settingsViewModel
+
+        state = state.copy(
+            playerOneName = settingsViewModel.playerOneName,
+            playerTwoName = settingsViewModel.playerTwoName
+
+            // playerOneColour = settingsViewModel.playerOneColour,
+            // playerTwoColour = settingsViewModel.playerTwoColour,
+            // gameMode = settingsViewModel.gameMode,
+            // boardSize = settingsViewModel.boardSize
+
+        )
+
+
+        return state
     }
 
     fun onAction(action: GameUserAction)
@@ -24,6 +47,7 @@ class GameViewModel : ViewModel() {
                 gameReset()
             }
             GameUserAction.AIMove -> {
+                // STEP 1: Generate AI move
                 val move: Int = generateAIMove()
 
                 boardItems[move] = PlayerType.AI
@@ -31,7 +55,7 @@ class GameViewModel : ViewModel() {
                     movesMade = state.movesMade + 1
                 )
 
-                // STEP 2: Check if P1 has won the game
+                // STEP 2: Check if AI has won the game
                 if(checkForVictory(PlayerType.AI))
                 {
                     state = state.copy(
@@ -52,10 +76,10 @@ class GameViewModel : ViewModel() {
                     )
                 }
 
-                // STEP 4: Generate AI move
+                // STEP 4: Change to Player 1
                 else {
                     state = state.copy (
-                        turnText = "Player 1's Turn...",
+                        turnText = "${state.playerOneName}'s Turn...",
                         currentTurn = PlayerType.ONE
                     )
                 }
@@ -70,9 +94,8 @@ class GameViewModel : ViewModel() {
         }
         state = state.copy(
             movesMade = 0,
-            turnText = "Player 1's turn...",
+            turnText = "${state.playerOneName}'s turn...",
             currentTurn = PlayerType.ONE,
-            victoryType = VictoryType.NONE,
             hasWon = false
         )
     }
@@ -103,7 +126,7 @@ class GameViewModel : ViewModel() {
                 if(checkForVictory(PlayerType.ONE))
                 {
                     state = state.copy(
-                        turnText = "Player 1 wins",
+                        turnText = "${state.playerOneName} wins",
                         playerOneWinCount = state.playerOneWinCount + 1,
                         currentTurn = PlayerType.NONE,
                         hasWon = true,
@@ -146,7 +169,7 @@ class GameViewModel : ViewModel() {
                     if(checkForVictory(PlayerType.ONE))
                     {
                         state = state.copy(
-                            turnText = "Player 1 wins",
+                            turnText = "${state.playerOneName} wins",
                             playerOneWinCount = state.playerOneWinCount + 1,
                             currentTurn = PlayerType.NONE,
                             hasWon = true,
@@ -166,7 +189,7 @@ class GameViewModel : ViewModel() {
                     // STEP 4: Move to next player
                     else {
                         state = state.copy (
-                            turnText = "Player 2's Turn...",
+                            turnText = "${state.playerTwoName}'s Turn...",
                             currentTurn = PlayerType.TWO
                         )
                     }
@@ -185,7 +208,7 @@ class GameViewModel : ViewModel() {
                     if(checkForVictory(PlayerType.TWO))
                     {
                         state = state.copy(
-                            turnText = "Player 2 wins",
+                            turnText = "${state.playerTwoName} wins",
                             playerTwoWinCount = state.playerTwoWinCount + 1,
                             currentTurn = PlayerType.NONE,
                             hasWon = true,
@@ -206,7 +229,7 @@ class GameViewModel : ViewModel() {
                     else
                     {
                         state = state.copy (
-                            turnText = "Player 1's Turn...",
+                            turnText = "${state.playerOneName}'s Turn...",
                             currentTurn = PlayerType.ONE
                         )
                     }
@@ -226,7 +249,6 @@ class GameViewModel : ViewModel() {
         for (row in 0 until state.rows) {
             for (col in 0 until state.cols - 3) {
                 if (checkLine(player, row, col, 0, 1)) {
-                    state = state.copy(victoryType = VictoryType.HORIZONTAL, victoryPos = getIndex(row, col))
                     return true
                 }
             }
@@ -236,7 +258,6 @@ class GameViewModel : ViewModel() {
         for (row in 0 until state.rows - 3) {
             for (col in 0 until state.cols) {
                 if (checkLine(player, row, col, 1, 0)) {
-                    state = state.copy(victoryType = VictoryType.VERTICAL, victoryPos = getIndex(row, col))
                     return true
                 }
             }
@@ -246,7 +267,6 @@ class GameViewModel : ViewModel() {
         for (row in 0 until state.rows - 3) {
             for (col in 0 until state.cols - 3) {
                 if (checkLine(player, row, col, 1, 1)) {
-                    state = state.copy(victoryType = VictoryType.DIAGONAL, victoryPos = getIndex(row, col))
                     return true
                 }
             }
@@ -256,7 +276,6 @@ class GameViewModel : ViewModel() {
         for (row in 0 until state.rows - 3) {
             for (col in 3 until state.cols) {
                 if (checkLine(player, row, col, 1, -1)) {
-                    state = state.copy(victoryType = VictoryType.DIAGONAL, victoryPos = getIndex(row, col))
                     return true
                 }
             }
@@ -281,7 +300,7 @@ class GameViewModel : ViewModel() {
     }
 
     private fun isSinglePlayer(): Boolean {
-        return state.gameMode == GameMode.SINGLE
+        return state.gameMode == SharedEnums.GameMode.SINGLE
     }
 
     private fun generateAIMove(): Int {
