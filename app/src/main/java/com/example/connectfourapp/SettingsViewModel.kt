@@ -18,7 +18,7 @@ class SettingsViewModel : ViewModel() {
     var playerOneColour by mutableStateOf(SharedEnums.PlayerColour.RED)
     var playerTwoColour by mutableStateOf(SharedEnums.PlayerColour.YELLOW)
     var selectedBoardOption by mutableStateOf(SharedEnums.BoardSize.STANDARD)
-    var selectedModeOption by mutableStateOf(SharedEnums.GameMode.SINGLE)
+    var selectedModeOption by mutableStateOf(SharedEnums.GameMode.MULTI)
 
     //---------- Mutators
     fun updatePlayerOneIsExpanded(){ // Toggles if Player one drop down menu is down or not
