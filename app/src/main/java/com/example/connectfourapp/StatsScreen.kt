@@ -93,15 +93,6 @@ fun Header(onBackClick: () -> Unit) {
 
 @Composable
 fun BackButton(onClick: () -> Unit) {
-//    IconButton(
-//        onClick = onClick,
-//        modifier = Modifier.size(48.dp)
-//    ) {
-//        Icon(
-//            imageVector = Icons.Default.ArrowBack,
-//            contentDescription = "Back to Menu"
-//        )
-//    }
     Button(
         onClick = { onClick()},
         modifier = Modifier.size(36.dp),
