@@ -25,8 +25,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
@@ -214,54 +214,66 @@ fun PortraitContent(
         }
 
         // Board!
-        Box (
-            modifier = Modifier
-                // .fillMaxWidth()
-                // .aspectRatio(1f)
-                .background(BoardBlue),
-            contentAlignment = Alignment.Center
-        ) {
-            LazyVerticalGrid(
+        if(!state.isPaused)
+        {
+            Box (
                 modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    // aspect ratio HAS to be cols / rows!
-                    .aspectRatio(state.cols.toFloat() / viewModel.state.rows.toFloat()),
-                columns = GridCells.Fixed(state.cols)
-
+                    // .fillMaxWidth()
+                    // .aspectRatio(1f)
+                    .background(BoardBlue),
+                contentAlignment = Alignment.Center
             ) {
-                viewModel.boardItems.forEach { (cellNum, playerType) ->
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(1f)
-                                .clickable(
-                                    interactionSource = MutableInteractionSource(),
-                                    indication = null
-                                ) {
-                                    if (state.currentTurn == PlayerType.ONE || state.currentTurn == PlayerType.TWO) {
-                                        viewModel.onAction(GameUserAction.BoardTapped(cellNum))
-                                    }
-                                },
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            AnimatedVisibility(
-                                visible = playerType != PlayerType.NONE,
-                                enter = scaleIn(tween(1000))
-                            ) {
-                                when (playerType) {
-                                    PlayerType.ONE -> Disc(playerColour = SharedEnums.PlayerColour.RED)
-                                    PlayerType.TWO -> Disc(playerColour = SharedEnums.PlayerColour.YELLOW)
-                                    PlayerType.AI -> Disc(playerColour = SharedEnums.PlayerColour.ORANGE)
-                                    PlayerType.NONE -> {}
-                                }
-                            }
-                            Disc()
+                LazyVerticalGrid(
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        // aspect ratio HAS to be cols / rows!
+                        .aspectRatio(state.cols.toFloat() / viewModel.state.rows.toFloat()),
+                    columns = GridCells.Fixed(state.cols)
 
+                ) {
+                    viewModel.boardItems.forEach { (cellNum, playerType) ->
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(1f)
+                                    .clickable(
+                                        interactionSource = MutableInteractionSource(),
+                                        indication = null
+                                    ) {
+                                        if (state.currentTurn == PlayerType.ONE || state.currentTurn == PlayerType.TWO) {
+                                            viewModel.onAction(GameUserAction.BoardTapped(cellNum))
+                                        }
+                                    },
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                AnimatedVisibility(
+                                    visible = playerType != PlayerType.NONE,
+                                    enter = scaleIn(tween(1000))
+                                ) {
+                                    when (playerType) {
+                                        PlayerType.ONE -> Disc(playerColour = SharedEnums.PlayerColour.RED)
+                                        PlayerType.TWO -> Disc(playerColour = SharedEnums.PlayerColour.YELLOW)
+                                        PlayerType.AI -> Disc(playerColour = SharedEnums.PlayerColour.ORANGE)
+                                        PlayerType.NONE -> {}
+                                    }
+                                }
+                                Disc()
+
+                            }
                         }
                     }
                 }
+            }
+        }
+        else {
+            Column (
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Game Paused", fontFamily = Righteous, fontSize = 40.sp)
+                Text(text = "Press play to continue...")
             }
         }
         // Moves remaining/played
@@ -300,16 +312,29 @@ fun PortraitContent(
 
             // Pause game
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    viewModel.onAction(GameUserAction.PauseButtonClicked)
+                },
                 modifier = Modifier.size(48.dp),
                 shape = CircleShape,
                 contentPadding = PaddingValues(1.dp)
             ) {
+                if(!state.isPaused)
+                {
+                    Icon(
+                        painter = painterResource(R.drawable.baseline_pause),
+                        contentDescription = "Pause"
+                    )
+                }
 
-                Icon(
-                    painter = painterResource(R.drawable.baseline_pause),
-                    contentDescription = "Pause"
-                )
+                else
+                {
+                    Icon(
+                        imageVector = Icons.Default.PlayArrow,
+                        contentDescription = "Resume Game",
+                    )
+                }
+
             }
 
             // Settings
@@ -516,56 +541,68 @@ fun LandscapeContent(
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             // Board!
-            Box (
-                modifier = Modifier
-                    // .size(300.dp)
-                    // .aspectRatio(1f)
-                    .background(BoardBlue),
-                contentAlignment = Alignment.Center
-            ){
-                LazyVerticalGrid(
+            if(!state.isPaused)
+            {
+                Box (
                     modifier = Modifier
-                        .fillMaxWidth(0.9f)
-                        // aspect ratio HAS to be cols/rows!
-                        .aspectRatio(state.cols.toFloat() / viewModel.state.rows.toFloat()),
-                    columns = GridCells.Fixed(state.cols)
+                        // .size(300.dp)
+                        // .aspectRatio(1f)
+                        .background(BoardBlue),
+                    contentAlignment = Alignment.Center
+                ){
+                    LazyVerticalGrid(
+                        modifier = Modifier
+                            .fillMaxWidth(0.9f)
+                            // aspect ratio HAS to be cols/rows!
+                            .aspectRatio(state.cols.toFloat() / viewModel.state.rows.toFloat()),
+                        columns = GridCells.Fixed(state.cols)
 
-                ) {
-                    viewModel.boardItems.forEach { (cellNum, playerType) ->
-                        item {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .aspectRatio(1f)
-                                    .clickable(
-                                        interactionSource = MutableInteractionSource(),
-                                        indication = null
-                                    ) {
-                                        if (state.currentTurn == PlayerType.ONE || state.currentTurn == PlayerType.TWO) {
-                                            viewModel.onAction(GameUserAction.BoardTapped(cellNum))
-                                        }
-                                    },
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                AnimatedVisibility(
-                                    visible = playerType != PlayerType.NONE,
-                                    enter = scaleIn(tween(1000))
+                    ) {
+                        viewModel.boardItems.forEach { (cellNum, playerType) ->
+                            item {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .aspectRatio(1f)
+                                        .clickable(
+                                            interactionSource = MutableInteractionSource(),
+                                            indication = null
+                                        ) {
+                                            if (state.currentTurn == PlayerType.ONE || state.currentTurn == PlayerType.TWO) {
+                                                viewModel.onAction(GameUserAction.BoardTapped(cellNum))
+                                            }
+                                        },
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
                                 ) {
-                                    when (playerType) {
-                                        PlayerType.ONE -> Disc(playerColour = SharedEnums.PlayerColour.RED)
-                                        PlayerType.TWO -> Disc(playerColour = SharedEnums.PlayerColour.YELLOW)
-                                        PlayerType.AI -> Disc(playerColour = SharedEnums.PlayerColour.ORANGE)
-                                        PlayerType.NONE -> {}
+                                    AnimatedVisibility(
+                                        visible = playerType != PlayerType.NONE,
+                                        enter = scaleIn(tween(1000))
+                                    ) {
+                                        when (playerType) {
+                                            PlayerType.ONE -> Disc(playerColour = SharedEnums.PlayerColour.RED)
+                                            PlayerType.TWO -> Disc(playerColour = SharedEnums.PlayerColour.YELLOW)
+                                            PlayerType.AI -> Disc(playerColour = SharedEnums.PlayerColour.ORANGE)
+                                            PlayerType.NONE -> {}
+                                        }
                                     }
-                                }
-                                Disc()
+                                    Disc()
 
+                                }
                             }
                         }
                     }
                 }
+            } else {
+                Column (
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "Game Paused", fontFamily = Righteous, fontSize = 40.sp)
+                    Text(text = "Press play to continue...")
+                }
             }
+
 
             // Buttons
             Row (
@@ -590,16 +627,29 @@ fun LandscapeContent(
 
                 // Pause game
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        viewModel.onAction(GameUserAction.PauseButtonClicked)
+                    },
                     modifier = Modifier.size(48.dp),
                     shape = CircleShape,
                     contentPadding = PaddingValues(1.dp)
                 ) {
+                    if(!state.isPaused)
+                    {
+                        Icon(
+                            painter = painterResource(R.drawable.baseline_pause),
+                            contentDescription = "Pause"
+                        )
+                    }
 
-                    Icon(
-                        painter = painterResource(R.drawable.baseline_pause),
-                        contentDescription = "Pause"
-                    )
+                    else
+                    {
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = "Resume Game",
+                        )
+                    }
+
                 }
 
                 // Settings
