@@ -1,7 +1,4 @@
 package com.example.connectfourapp
-
-import android.media.Image
-
 data class GameState(
 
     // Determine num of rows and cols based on board size
