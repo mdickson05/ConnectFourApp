@@ -1,5 +1,4 @@
 package com.example.connectfourapp
-
 data class GameState(
 
     // Determine num of rows and cols based on board size
@@ -20,6 +19,9 @@ data class GameState(
     // Player Info
     val playerOneName: String = "Player 1",
     val playerTwoName: String = "Player 2",
+    val playerOneProfileImage: Int = R.drawable.ic_launcher_foreground,
+    val playerTwoProfileImage: Int = R.drawable.ic_launcher_foreground,
+
     val playerOneColour: SharedEnums.PlayerColour = SharedEnums.PlayerColour.RED,
     val playerTwoColour: SharedEnums.PlayerColour = SharedEnums.PlayerColour.YELLOW,
 
@@ -28,11 +30,11 @@ data class GameState(
     val turnText: String = "${playerOneName}'s Turn...",
     val currentTurn: PlayerType = PlayerType.ONE,
 
-    // Victory Info
-    val hasWon: Boolean = false,
+    // Game Info
+    val isPaused: Boolean = false,
 
     // Game mode
-    val gameMode: SharedEnums.GameMode = SharedEnums.GameMode.SINGLE
+    val gameMode: SharedEnums.GameMode = SharedEnums.GameMode.SINGLE,
 )
 
 // Function which converts boardSize enums into respective row integers

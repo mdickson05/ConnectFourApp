@@ -25,6 +25,8 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
         state = state.copy(
             playerOneName = settingsViewModel.playerOneName,
             playerTwoName = settingsViewModel.playerTwoName,
+            playerOneProfileImage = settingsViewModel.getPlayerOneProfileImage(),
+            playerTwoProfileImage = settingsViewModel.getPlayerTwoProfileImage(),
             playerOneColour = settingsViewModel.playerOneColour,
             playerTwoColour = settingsViewModel.playerTwoColour,
             gameMode = settingsViewModel.selectedModeOption,
@@ -58,7 +60,6 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
                         turnText = "AI wins",
                         aiWinCount = state.aiWinCount + 1,
                         currentTurn = PlayerType.NONE,
-                        hasWon = true,
                         spGamesPlayed = state.spGamesPlayed + 1
                     )
                 }
@@ -80,20 +81,32 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
                     )
                 }
             }
+            GameUserAction.PauseButtonClicked -> {
+                pauseGame()
+            }
 
         }
     }
 
-    private fun gameReset() {
-        boardItems.forEach{ (i, _) ->
-            boardItems[i] = PlayerType.NONE
-        }
-        state = state.copy(
-            movesMade = 0,
-            turnText = "${state.playerOneName}'s turn...",
-            currentTurn = PlayerType.ONE,
-            hasWon = false
+    private fun pauseGame() {
+        state = state.copy (
+            isPaused = !state.isPaused
         )
+    }
+
+    private fun gameReset() {
+        // Game should not be resettable if it is paused
+        if(!state.isPaused)
+        {
+            boardItems.forEach{ (i, _) ->
+                boardItems[i] = PlayerType.NONE
+            }
+            state = state.copy(
+                movesMade = 0,
+                turnText = "${state.playerOneName}'s turn...",
+                currentTurn = PlayerType.ONE
+            )
+        }
     }
 
 
@@ -125,7 +138,6 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
                         turnText = "${state.playerOneName} wins",
                         playerOneWinCount = state.playerOneWinCount + 1,
                         currentTurn = PlayerType.NONE,
-                        hasWon = true,
                         spGamesPlayed = state.spGamesPlayed + 1
                     )
                 }
@@ -168,7 +180,6 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
                             turnText = "${state.playerOneName} wins",
                             playerOneWinCount = state.playerOneWinCount + 1,
                             currentTurn = PlayerType.NONE,
-                            hasWon = true,
                             mpGamesPlayed = state.mpGamesPlayed + 1
                         )
                     }
@@ -207,7 +218,6 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
                             turnText = "${state.playerTwoName} wins",
                             playerTwoWinCount = state.playerTwoWinCount + 1,
                             currentTurn = PlayerType.NONE,
-                            hasWon = true,
                             mpGamesPlayed = state.mpGamesPlayed + 1
                         )
                     }
