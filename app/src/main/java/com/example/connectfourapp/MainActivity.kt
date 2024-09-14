@@ -36,6 +36,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,21 +47,42 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ConnectFourAppTheme {
-                // MenuScreen()
-                StatsScreen()
-                val settingsViewModel: SettingsViewModel = viewModel()
-                val gameViewModel: GameViewModel = viewModel { GameViewModel(settingsViewModel) }
-                // SettingsScreen(viewModel = settingsViewModel)
-                GameScreen(viewModel = gameViewModel)
-
+                val navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = Screen.Menu.route
+                ) {
+                    composable(Screen.Menu.route) {
+                        MenuScreen(navController)
+                    }
+                    composable(Screen.Stats.route) {
+                        StatsScreen(onBackClick = { navController.popBackStack() })
+                    }
+                    composable(Screen.Game.route) {
+                        GameScreen(navController)
+                    }
+                    composable(Screen.Settings.route) {
+                        SettingsScreen(navController)
+                    }
+                }
             }
+
+                // MenuScreen()
+
+//                SettingsScreen(
+//                    viewModel = settingsViewModel
+//                )
+                // val settingsViewModel: SettingsViewModel = viewModel()
+                // val gameViewModel: GameViewModel = viewModel { GameViewModel(settingsViewModel) }
+                // GameScreen(viewModel = gameViewModel)
+                //StatsScreen()
         }
     }
 }
 
-@Preview
+
 @Composable
-fun MenuScreen() {
+fun MenuScreen(navController: NavHostController) {
     Box( // Box to align text at button and title and buttons in middle
         modifier = Modifier
             .fillMaxSize()
@@ -147,4 +172,19 @@ fun MenuScreen() {
         }
     }
 }
+
+//@Preview
+//@Composable
+//fun prevMainScreen(){
+//    MenuScreen(navController = )
+//}
+
+sealed class Screen(val route: String) {
+    object Menu : Screen("menu")
+    object Stats : Screen("stats")
+    object Game : Screen("game")
+    object Settings : Screen("settings")
+}
+
+
 
