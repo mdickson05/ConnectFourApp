@@ -18,9 +18,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -35,7 +35,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -57,7 +57,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 fun SettingsScreen(
     viewModel: SettingsViewModel
 ){
-    var orientation by remember { mutableStateOf(Configuration.ORIENTATION_PORTRAIT) }
+    var orientation by remember { mutableIntStateOf(Configuration.ORIENTATION_PORTRAIT) }
     val configuration = LocalConfiguration.current
 
     // If our configuration changes then this will launch a new coroutine scope for it
@@ -139,7 +139,7 @@ fun PortraitContent(
                 fontFamily = CooperBTBold,
                 fontSize = 30.sp,
 
-            )
+                )
 
             // Spacer to balance the remaining space on the right
             Spacer(modifier = Modifier.weight(1f))
@@ -171,23 +171,37 @@ fun PortraitContent(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Image(
-                                modifier = Modifier
-                                    .size(64.dp),
-                                imageVector = Icons.Default.AccountCircle,
-                                contentDescription = "Player 1 Profile Pic"
-                            )
-
-                            // Edit profile image button
+                            // Scroll Left
                             Button(
-                                onClick = { /*TODO*/ },
+                                onClick = { viewModel.cyclePlayerOneProfile(false) },
                                 modifier = Modifier.size(24.dp),
                                 shape = CircleShape,
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
                                 contentPadding = PaddingValues(1.5.dp)
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Create,
+                                    imageVector = Icons.Default.KeyboardArrowLeft,
+                                    contentDescription = "Settings",
+                                )
+                            }
+
+                            Image(
+                                modifier = Modifier
+                                    .size(48.dp),
+                                painter = painterResource(id = viewModel.getPlayerOneProfileImage()),
+                                contentDescription = "Player 1 Profile Pic"
+                            )
+
+                            // Scroll Right
+                            Button(
+                                onClick = { viewModel.cyclePlayerOneProfile(true) },
+                                modifier = Modifier.size(24.dp),
+                                shape = CircleShape,
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
+                                contentPadding = PaddingValues(1.5.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowRight,
                                     contentDescription = "Settings",
                                 )
                             }
@@ -245,23 +259,37 @@ fun PortraitContent(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Image(
-                                modifier = Modifier
-                                    .size(64.dp),
-                                imageVector = Icons.Default.AccountCircle,
-                                contentDescription = "Player 2 Profile Pic"
-                            )
-
-                            // Edit profile image button
+                            // Scroll image right
                             Button(
-                                onClick = { /*TODO*/ },
+                                onClick = { viewModel.cyclePlayerTwoProfile(false) },
                                 modifier = Modifier.size(24.dp),
                                 shape = CircleShape,
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
                                 contentPadding = PaddingValues(1.5.dp)
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Create,
+                                    imageVector = Icons.Default.KeyboardArrowLeft,
+                                    contentDescription = "Settings",
+                                )
+                            }
+
+                            Image(
+                                modifier = Modifier
+                                    .size(48.dp),
+                                painter = painterResource(id = viewModel.getPlayerTwoProfileImage()),
+                                contentDescription = "Player 2 Profile Pic"
+                            )
+
+                            // Scroll image right
+                            Button(
+                                onClick = { viewModel.cyclePlayerTwoProfile(true) },
+                                modifier = Modifier.size(24.dp),
+                                shape = CircleShape,
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
+                                contentPadding = PaddingValues(1.5.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowRight,
                                     contentDescription = "Settings",
                                 )
                             }
@@ -322,30 +350,36 @@ fun PortraitContent(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    //Enums to change bord sizes
+                    val boardSizeDrawables = mapOf(
+                        SharedEnums.BoardSize.SMALL to R.drawable.small,
+                        SharedEnums.BoardSize.STANDARD to R.drawable.standard,
+                        SharedEnums.BoardSize.LARGE to R.drawable.large
+                    )
+
                     boardOptions.forEachIndexed { index, text ->
+                        val boardSize = SharedEnums.BoardSize.entries[index]
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
                                 .selectable(
-                                    selected = (SharedEnums.BoardSize.entries[index] == viewModel.selectedBoardOption),
-                                    onClick = { viewModel.updateSelectedBoardOption(SharedEnums.BoardSize.entries[index]) }
+                                    selected = (boardSize == viewModel.selectedBoardOption),
+                                    onClick = { viewModel.updateSelectedBoardOption(boardSize) }
                                 )
                         ) {
                             Image(
-                                painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                                contentDescription = null,
+                                painter = painterResource(id = boardSizeDrawables[boardSize] ?: R.drawable.small),
+                                contentDescription = "Board size: $text",
                                 modifier = Modifier
                                     .size(100.dp)
                                     .background(Color.DarkGray),
                                 contentScale = ContentScale.Crop
                             )
                             RadioButton(
-                                selected = (SharedEnums.BoardSize.entries[index] == viewModel.selectedBoardOption),
-                                onClick = { viewModel.updateSelectedBoardOption(SharedEnums.BoardSize.entries[index]) }
+                                selected = (boardSize == viewModel.selectedBoardOption),
+                                onClick = { viewModel.updateSelectedBoardOption(boardSize) }
                             )
-                            Text(
-                                text = text,
-                            )
+                            Text(text = text)
                         }
                     }
                 }
@@ -359,6 +393,8 @@ fun PortraitContent(
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(text = "Mode", fontFamily = CooperBTBold, fontSize = 20.sp, modifier = Modifier.padding(bottom = 15.dp))
+
+                val modeImages = listOf(R.drawable.mode_1, R.drawable.mode_2) //List of images
                 Row(
                     Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
@@ -374,11 +410,11 @@ fun PortraitContent(
                                 )
                         ) {
                             Image(
-                                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                                painter = painterResource(id = modeImages[index]),
                                 contentDescription = null,
                                 modifier = Modifier
                                     .size(100.dp)
-                                    .background(Color.DarkGray),
+                                    .background(Color.Transparent),
                                 contentScale = ContentScale.Crop
                             )
                             RadioButton(
@@ -473,22 +509,37 @@ fun LandscapeContent(
                             Column(modifier = Modifier.padding(10.dp)) {
                                 Text(text = "Player 1", fontSize = 20.sp)
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Image(
-                                        modifier = Modifier.size(64.dp),
-                                        imageVector = Icons.Default.AccountCircle,
-                                        contentDescription = "Player 1 Profile Pic"
-                                    )
-
-                                    // Edit profile image button
+                                    // Scroll Left
                                     Button(
-                                        onClick = { /*TODO*/ },
+                                        onClick = { viewModel.cyclePlayerOneProfile(false) },
                                         modifier = Modifier.size(24.dp),
                                         shape = CircleShape,
                                         colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
                                         contentPadding = PaddingValues(1.5.dp)
                                     ) {
                                         Icon(
-                                            imageVector = Icons.Default.Create,
+                                            imageVector = Icons.Default.KeyboardArrowLeft,
+                                            contentDescription = "Settings",
+                                        )
+                                    }
+
+                                    Image(
+                                        modifier = Modifier
+                                            .size(48.dp),
+                                        painter = painterResource(id = viewModel.getPlayerOneProfileImage()),
+                                        contentDescription = "Player 1 Profile Pic"
+                                    )
+
+                                    // Scroll Right
+                                    Button(
+                                        onClick = { viewModel.cyclePlayerOneProfile(true) },
+                                        modifier = Modifier.size(24.dp),
+                                        shape = CircleShape,
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
+                                        contentPadding = PaddingValues(1.5.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.KeyboardArrowRight,
                                             contentDescription = "Settings",
                                         )
                                     }
@@ -549,22 +600,37 @@ fun LandscapeContent(
                                 Column(modifier = Modifier.padding(10.dp)) {
                                     Text(text = "Player 2", fontSize = 20.sp)
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Image(
-                                            modifier = Modifier.size(64.dp),
-                                            imageVector = Icons.Default.AccountCircle,
-                                            contentDescription = "Player 2 Profile Pic"
-                                        )
-
-                                        // Edit profile image button
+                                        // Scroll Left
                                         Button(
-                                            onClick = { /*TODO*/ },
+                                            onClick = { viewModel.cyclePlayerTwoProfile(false) },
                                             modifier = Modifier.size(24.dp),
                                             shape = CircleShape,
                                             colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
                                             contentPadding = PaddingValues(1.5.dp)
                                         ) {
                                             Icon(
-                                                imageVector = Icons.Default.Create,
+                                                imageVector = Icons.Default.KeyboardArrowLeft,
+                                                contentDescription = "Settings",
+                                            )
+                                        }
+
+                                        Image(
+                                            modifier = Modifier
+                                                .size(64.dp),
+                                            painter = painterResource(id = viewModel.getPlayerTwoProfileImage()),
+                                            contentDescription = "Player 2 Profile Pic"
+                                        )
+
+                                        // Scroll Right
+                                        Button(
+                                            onClick = { viewModel.cyclePlayerTwoProfile(true) },
+                                            modifier = Modifier.size(24.dp),
+                                            shape = CircleShape,
+                                            colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
+                                            contentPadding = PaddingValues(1.5.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.KeyboardArrowRight,
                                                 contentDescription = "Settings",
                                             )
                                         }
@@ -649,26 +715,35 @@ fun LandscapeContent(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth()
                         ) {
+                            val boardSizeDrawables = mapOf(
+                                SharedEnums.BoardSize.SMALL to R.drawable.small,
+                                SharedEnums.BoardSize.STANDARD to R.drawable.standard,
+                                SharedEnums.BoardSize.LARGE to R.drawable.large
+                            )
+
+                            val boardOptions = listOf("Small (6x5)", "Standard (7x6)", "Large (8x7)")
+
                             boardOptions.forEachIndexed { index, text ->
+                                val boardSize = SharedEnums.BoardSize.entries[index]
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     modifier = Modifier
                                         .selectable(
-                                            selected = (SharedEnums.BoardSize.entries[index] == viewModel.selectedBoardOption),
-                                            onClick = { viewModel.updateSelectedBoardOption(SharedEnums.BoardSize.entries[index]) }
+                                            selected = (boardSize == viewModel.selectedBoardOption),
+                                            onClick = { viewModel.updateSelectedBoardOption(boardSize) }
                                         )
                                 ) {
                                     Image(
-                                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                                        contentDescription = null,
+                                        painter = painterResource(id = boardSizeDrawables[boardSize] ?: R.drawable.small),
+                                        contentDescription = "Board size: $text",
                                         modifier = Modifier
-                                            .size(50.dp)
+                                            .size(80.dp)
                                             .background(Color.DarkGray),
                                         contentScale = ContentScale.Crop
                                     )
                                     RadioButton(
-                                        selected = (SharedEnums.BoardSize.entries[index] == viewModel.selectedBoardOption),
-                                        onClick = { viewModel.updateSelectedBoardOption(SharedEnums.BoardSize.entries[index]) }
+                                        selected = (boardSize == viewModel.selectedBoardOption),
+                                        onClick = { viewModel.updateSelectedBoardOption(boardSize) }
                                     )
                                     Text(text = text)
                                 }
@@ -685,6 +760,7 @@ fun LandscapeContent(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.SpaceEvenly
                     ) {
+                        val modeImages = listOf(R.drawable.mode_1, R.drawable.mode_2) //List of images
                         Text(
                             text = "Mode",
                             fontFamily = CooperBTBold,
@@ -706,11 +782,11 @@ fun LandscapeContent(
                                         )
                                 ) {
                                     Image(
-                                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                                        painter = painterResource(id = modeImages[index]),
                                         contentDescription = null,
                                         modifier = Modifier
                                             .size(50.dp)
-                                            .background(Color.DarkGray),
+                                            .background(Color.Transparent),
                                         contentScale = ContentScale.Crop
                                     )
                                     RadioButton(

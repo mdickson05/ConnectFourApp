@@ -11,8 +11,10 @@ data class GameState(
     val playerOneWinCount: Int = 0,
     val playerTwoWinCount: Int = 0,
     val aiWinCount: Int = 0,
-    val drawCount: Int = 0,
-    val gamesPlayed: Int = 0,
+    val spDrawCount: Int = 0,
+    val mpDrawCount: Int = 0,
+    val spGamesPlayed: Int = 0,
+    val mpGamesPlayed: Int = 0,
     val movesMade: Int = 0,
 
     // Player Info

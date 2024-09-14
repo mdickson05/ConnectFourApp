@@ -59,7 +59,7 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
                         aiWinCount = state.aiWinCount + 1,
                         currentTurn = PlayerType.NONE,
                         hasWon = true,
-                        gamesPlayed = state.gamesPlayed + 1
+                        spGamesPlayed = state.spGamesPlayed + 1
                     )
                 }
 
@@ -67,8 +67,8 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
                 else if(hasBoardFull()) {
                     state = state.copy (
                         turnText = "Game Draw",
-                        drawCount =  state.drawCount + 1,
-                        gamesPlayed = state.gamesPlayed + 1
+                        spDrawCount =  state.spDrawCount + 1,
+                        spGamesPlayed = state.spGamesPlayed + 1
                     )
                 }
 
@@ -126,7 +126,7 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
                         playerOneWinCount = state.playerOneWinCount + 1,
                         currentTurn = PlayerType.NONE,
                         hasWon = true,
-                        gamesPlayed = state.gamesPlayed + 1
+                        spGamesPlayed = state.spGamesPlayed + 1
                     )
                 }
 
@@ -134,8 +134,8 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
                 else if(hasBoardFull()) {
                     state = state.copy (
                         turnText = "Game Draw",
-                        drawCount =  state.drawCount + 1,
-                        gamesPlayed = state.gamesPlayed + 1
+                        spDrawCount =  state.spDrawCount + 1,
+                        spGamesPlayed = state.spGamesPlayed + 1
                     )
                 }
 
@@ -169,7 +169,7 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
                             playerOneWinCount = state.playerOneWinCount + 1,
                             currentTurn = PlayerType.NONE,
                             hasWon = true,
-                            gamesPlayed = state.gamesPlayed + 1
+                            mpGamesPlayed = state.mpGamesPlayed + 1
                         )
                     }
 
@@ -177,8 +177,8 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
                     else if(hasBoardFull()) {
                         state = state.copy (
                             turnText = "Game Draw",
-                            drawCount =  state.drawCount + 1,
-                            gamesPlayed = state.gamesPlayed + 1
+                            mpDrawCount =  state.mpDrawCount + 1,
+                            mpGamesPlayed = state.mpGamesPlayed + 1
                         )
                     }
 
@@ -208,7 +208,7 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
                             playerTwoWinCount = state.playerTwoWinCount + 1,
                             currentTurn = PlayerType.NONE,
                             hasWon = true,
-                            gamesPlayed = state.gamesPlayed + 1
+                            mpGamesPlayed = state.mpGamesPlayed + 1
                         )
                     }
 
@@ -216,8 +216,8 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
                     else if(hasBoardFull()) {
                         state = state.copy (
                             turnText = "Game Draw",
-                            drawCount =  state.drawCount + 1,
-                            gamesPlayed = state.gamesPlayed + 1
+                            mpDrawCount =  state.mpDrawCount + 1,
+                            mpGamesPlayed = state.mpGamesPlayed + 1
                         )
                     }
 

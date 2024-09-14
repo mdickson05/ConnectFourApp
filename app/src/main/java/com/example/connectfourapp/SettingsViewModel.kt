@@ -1,6 +1,7 @@
 package com.example.connectfourapp
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -18,6 +19,45 @@ class SettingsViewModel : ViewModel() {
     var playerTwoColour by mutableStateOf(SharedEnums.PlayerColour.YELLOW)
     var selectedBoardOption by mutableStateOf(SharedEnums.BoardSize.STANDARD)
     var selectedModeOption by mutableStateOf(SharedEnums.GameMode.MULTI)
+
+    // Profile image
+    private var playerOneProfileIndex by mutableIntStateOf(0) // Stores the index of image in list
+    private var playerTwoProfileIndex by mutableIntStateOf(1)
+
+    // List of profile pictures
+private val profileImages = listOf(
+        R.drawable.profile_1,
+        R.drawable.profile_2,
+        R.drawable.profile_3,
+        R.drawable.profile_4,
+        R.drawable.profile_5,
+//        R.drawable.profile_6,
+//        R.drawable.profile_7,
+//        R.drawable.profile_8,
+//        R.drawable.profile_9,
+//        R.drawable.profile_10
+)
+
+    //---------- Cycle through player profile pics
+    fun cyclePlayerOneProfile(forward: Boolean) {
+        playerOneProfileIndex = if (forward) {
+            (playerOneProfileIndex + 1) % profileImages.size
+        } else {
+            (playerOneProfileIndex - 1 + profileImages.size) % profileImages.size
+        }
+    }
+
+    fun cyclePlayerTwoProfile(forward: Boolean) {
+        playerTwoProfileIndex = if (forward) {
+            (playerTwoProfileIndex + 1) % profileImages.size
+        } else {
+            (playerTwoProfileIndex - 1 + profileImages.size) % profileImages.size
+        }
+    }
+
+    // Accessors for profile image
+    fun getPlayerOneProfileImage(): Int = profileImages[playerOneProfileIndex]
+    fun getPlayerTwoProfileImage(): Int = profileImages[playerTwoProfileIndex]
 
     //---------- Mutators
     fun updatePlayerOneIsExpanded(){ // Toggles if Player one drop down menu is down or not
