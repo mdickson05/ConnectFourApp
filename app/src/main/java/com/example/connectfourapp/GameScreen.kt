@@ -343,7 +343,7 @@ fun PortraitContent(
 
             // Settings
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { navController.navigate(Screen.Settings.route) },
                 modifier = Modifier.size(48.dp),
                 shape = CircleShape,
                 contentPadding = PaddingValues(1.dp)
@@ -659,7 +659,7 @@ fun LandscapeContent(
 
                 // Settings
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.navigate(Screen.Settings.route) },
                     modifier = Modifier.size(48.dp),
                     shape = CircleShape,
                     contentPadding = PaddingValues(1.dp)
@@ -712,7 +712,7 @@ fun Prev() {
     val settingsViewModel = SettingsViewModel() // Provide default values if necessary
     val gameViewModel = GameViewModel(settingsViewModel)
 
-    val navController = rememberNavController() // This creates a dummy NavController for previews
+    val navController = rememberNavController()
 
     GameScreen(viewModel = gameViewModel, navController = navController)
 }
