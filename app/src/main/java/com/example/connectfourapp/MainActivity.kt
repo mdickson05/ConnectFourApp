@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
                         StatsScreen(onBackClick = { navController.popBackStack() })
                     }
                     composable(Screen.Game.route) {
-                        GameScreen(viewModel = gameViewModel)
+                        GameScreen(viewModel = gameViewModel,  navController = navController)
                     }
                     composable(Screen.Settings.route) {
                         SettingsScreen(viewModel = settingsViewModel)
