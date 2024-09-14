@@ -34,7 +34,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -45,13 +44,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             ConnectFourAppTheme {
                 // MenuScreen()
-//                SettingsScreen(
-//                    viewModel = settingsViewModel
-//                )
-                // val settingsViewModel: SettingsViewModel = viewModel()
-                // val gameViewModel: GameViewModel = viewModel { GameViewModel(settingsViewModel) }
-                // GameScreen(viewModel = gameViewModel)
-                StatsScreen()
+
+
+                val settingsViewModel: SettingsViewModel = viewModel()
+                SettingsScreen(viewModel = settingsViewModel)
+
+//                val gameViewModel: GameViewModel = viewModel { GameViewModel(settingsViewModel) }
+//                GameScreen(viewModel = gameViewModel)
+                // StatsScreen()
             }
         }
     }

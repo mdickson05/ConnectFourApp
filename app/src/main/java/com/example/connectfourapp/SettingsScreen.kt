@@ -737,7 +737,7 @@ fun LandscapeContent(
                                         painter = painterResource(id = boardSizeDrawables[boardSize] ?: R.drawable.small),
                                         contentDescription = "Board size: $text",
                                         modifier = Modifier
-                                            .size(100.dp)
+                                            .size(80.dp)
                                             .background(Color.DarkGray),
                                         contentScale = ContentScale.Crop
                                     )
@@ -760,6 +760,7 @@ fun LandscapeContent(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.SpaceEvenly
                     ) {
+                        val modeImages = listOf(R.drawable.mode_1, R.drawable.mode_2) //List of images
                         Text(
                             text = "Mode",
                             fontFamily = CooperBTBold,
@@ -781,11 +782,11 @@ fun LandscapeContent(
                                         )
                                 ) {
                                     Image(
-                                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                                        painter = painterResource(id = modeImages[index]),
                                         contentDescription = null,
                                         modifier = Modifier
                                             .size(50.dp)
-                                            .background(Color.DarkGray),
+                                            .background(Color.Transparent),
                                         contentScale = ContentScale.Crop
                                     )
                                     RadioButton(
