@@ -25,6 +25,8 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
         state = state.copy(
             playerOneName = settingsViewModel.playerOneName,
             playerTwoName = settingsViewModel.playerTwoName,
+            playerOneProfileImage = settingsViewModel.getPlayerOneProfileImage(),
+            playerTwoProfileImage = settingsViewModel.getPlayerTwoProfileImage(),
             playerOneColour = settingsViewModel.playerOneColour,
             playerTwoColour = settingsViewModel.playerTwoColour,
             gameMode = settingsViewModel.selectedModeOption,

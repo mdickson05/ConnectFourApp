@@ -121,7 +121,7 @@ fun PortraitContent(
                 Image(
                     modifier = Modifier
                         .size(64.dp),
-                    imageVector = Icons.Default.AccountCircle,
+                    painter = painterResource(state.playerOneProfileImage),
                     contentDescription = "${state.playerOneName} Profile Pic"
                 )
 
@@ -169,7 +169,7 @@ fun PortraitContent(
                 Image(
                     modifier = Modifier
                         .size(64.dp),
-                    imageVector = Icons.Default.AccountCircle,
+                    painter = painterResource(state.playerTwoProfileImage),
                     contentDescription = "${state.playerTwoName}}/AI Profile Pic"
                 )
 
@@ -412,7 +412,7 @@ fun LandscapeContent(
                 Image(
                     modifier = Modifier
                         .size(64.dp),
-                    imageVector = Icons.Default.AccountCircle,
+                    painter = painterResource(state.playerOneProfileImage),
                     contentDescription = "${state.playerOneName} Profile Pic"
                 )
 
@@ -458,7 +458,7 @@ fun LandscapeContent(
                 Image(
                     modifier = Modifier
                         .size(64.dp),
-                    imageVector = Icons.Default.AccountCircle,
+                    painter = painterResource(state.playerTwoProfileImage),
                     contentDescription = "${state.playerTwoName}/AI Profile Pic"
                 )
 

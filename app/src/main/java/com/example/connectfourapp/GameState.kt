@@ -1,5 +1,7 @@
 package com.example.connectfourapp
 
+import android.media.Image
+
 data class GameState(
 
     // Determine num of rows and cols based on board size
@@ -20,6 +22,9 @@ data class GameState(
     // Player Info
     val playerOneName: String = "Player 1",
     val playerTwoName: String = "Player 2",
+    val playerOneProfileImage: Int = R.drawable.ic_launcher_foreground,
+    val playerTwoProfileImage: Int = R.drawable.ic_launcher_foreground,
+
     val playerOneColour: SharedEnums.PlayerColour = SharedEnums.PlayerColour.RED,
     val playerTwoColour: SharedEnums.PlayerColour = SharedEnums.PlayerColour.YELLOW,
 
