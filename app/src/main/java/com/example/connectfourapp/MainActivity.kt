@@ -48,6 +48,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             ConnectFourAppTheme {
                 val navController = rememberNavController()
+                val settingsViewModel: SettingsViewModel = viewModel()
+                val gameViewModel: GameViewModel = viewModel { GameViewModel(settingsViewModel) }
+
                 NavHost(
                     navController = navController,
                     startDestination = Screen.Menu.route
@@ -59,10 +62,10 @@ class MainActivity : ComponentActivity() {
                         StatsScreen(onBackClick = { navController.popBackStack() })
                     }
                     composable(Screen.Game.route) {
-                        GameScreen(navController)
+                        GameScreen(viewModel = gameViewModel)
                     }
                     composable(Screen.Settings.route) {
-                        SettingsScreen(navController)
+                        SettingsScreen(viewModel = settingsViewModel)
                     }
                 }
             }
@@ -112,7 +115,7 @@ fun MenuScreen(navController: NavHostController) {
             ) {
                 //---------- Statistics button
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.navigate(Screen.Stats.route) },
                     modifier = Modifier
                         .padding(16.dp),
                     colors = ButtonDefaults.buttonColors(Color.DarkGray)
@@ -125,7 +128,7 @@ fun MenuScreen(navController: NavHostController) {
 
                 //---------- Play button
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.navigate(Screen.Game.route) },
                     modifier = Modifier
                         .padding(16.dp)
                         .weight(1f),
@@ -139,7 +142,7 @@ fun MenuScreen(navController: NavHostController) {
 
                 //---------- Settings Button
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.navigate(Screen.Settings.route) },
                     modifier = Modifier
                         .padding(16.dp),
                     colors = ButtonDefaults.buttonColors(Color.DarkGray)
