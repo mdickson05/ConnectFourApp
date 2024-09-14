@@ -51,11 +51,14 @@ import androidx.compose.ui.unit.sp
 import com.example.connectfourapp.ui.theme.CooperBTBold
 import com.example.connectfourapp.ui.theme.GreyBG
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 // Source for orientation: https://stackoverflow.com/a/67612872/21301692
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewModel
+    viewModel: SettingsViewModel,
+    navController: NavHostController
 ){
     var orientation by remember { mutableIntStateOf(Configuration.ORIENTATION_PORTRAIT) }
     val configuration = LocalConfiguration.current
@@ -69,10 +72,10 @@ fun SettingsScreen(
 
     when (orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
-            LandscapeContent(viewModel)
+            LandscapeContent(viewModel, navController)
         }
         else -> {
-            PortraitContent(viewModel)
+            PortraitContent(viewModel, navController)
         }
     }
 }
@@ -99,7 +102,8 @@ val modeOptionsDesc = listOf("(Player 1 vs. AI)", "(Player 1 vs. Player 2)")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PortraitContent(
-    viewModel: SettingsViewModel
+    viewModel: SettingsViewModel,
+    navController: NavHostController
 ) {
     Column(
         modifier = Modifier
@@ -118,7 +122,7 @@ fun PortraitContent(
         ) {
             // Go back to menu button
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { navController.popBackStack() },
                 modifier = Modifier.size(36.dp),
                 shape = CircleShape,
                 contentPadding = PaddingValues(1.dp),
@@ -441,7 +445,8 @@ fun PortraitContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LandscapeContent(
-    viewModel: SettingsViewModel
+    viewModel: SettingsViewModel,
+    navController: NavHostController
 ) {
     Log.d("SettingsScreen", "Current Orientation: ${viewModel.playerOneColour}")
     Column(
@@ -474,7 +479,7 @@ fun LandscapeContent(
                 ) {
                     // Go back to menu button
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { navController.popBackStack() },
                         modifier = Modifier.size(36.dp),
                         shape = CircleShape,
                         contentPadding = PaddingValues(1.dp),
@@ -813,5 +818,7 @@ fun LandscapeContent(
 @Composable
 fun SettingsPrev(){
     val viewModel = viewModel<SettingsViewModel>()
-    SettingsScreen(viewModel = viewModel)
+
+    val navController = rememberNavController()
+    SettingsScreen(viewModel = viewModel, navController = navController)
 }

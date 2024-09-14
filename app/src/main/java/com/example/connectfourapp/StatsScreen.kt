@@ -103,7 +103,7 @@ fun BackButton(onClick: () -> Unit) {
 //        )
 //    }
     Button(
-        onClick = { /*TODO*/ },
+        onClick = { onClick()},
         modifier = Modifier.size(36.dp),
         shape = CircleShape,
         contentPadding = PaddingValues(1.dp),

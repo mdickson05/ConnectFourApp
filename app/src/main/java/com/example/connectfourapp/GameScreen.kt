@@ -49,6 +49,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.connectfourapp.ui.theme.BoardBlue
 import com.example.connectfourapp.ui.theme.GreyBG
 import com.example.connectfourapp.ui.theme.Righteous
@@ -57,7 +59,8 @@ import java.util.Locale
 
 @Composable
 fun GameScreen(
-    viewModel: GameViewModel
+    viewModel: GameViewModel,
+    navController: NavHostController
 ){
     // GOT THE CODE FOR CHANGING CODE BASED ON ORIENTATION FROM STACK OVERFLOW:
     // https://stackoverflow.com/a/67612872/21301692
@@ -73,17 +76,18 @@ fun GameScreen(
 
     when (orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
-            LandscapeContent(viewModel)
+            LandscapeContent(viewModel, navController)
         }
         else -> {
-            PortraitContent(viewModel)
+            PortraitContent(viewModel, navController)
         }
     }
 }
 
 @Composable
 fun PortraitContent(
-    viewModel: GameViewModel
+    viewModel: GameViewModel,
+    navController: NavHostController
 ){
     val state = viewModel.state
 
@@ -298,7 +302,7 @@ fun PortraitContent(
         ){
             // Back to menu
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { navController.navigate(Screen.Menu.route) },
                 modifier = Modifier.size(48.dp),
                 shape = CircleShape,
                 contentPadding = PaddingValues(1.dp)
@@ -339,7 +343,7 @@ fun PortraitContent(
 
             // Settings
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { navController.navigate(Screen.Settings.route) },
                 modifier = Modifier.size(48.dp),
                 shape = CircleShape,
                 contentPadding = PaddingValues(1.dp)
@@ -386,7 +390,8 @@ fun PortraitContent(
 
 @Composable
 fun LandscapeContent(
-    viewModel: GameViewModel
+    viewModel: GameViewModel,
+    navController: NavHostController
 ){
     val state = viewModel.state
 
@@ -613,7 +618,7 @@ fun LandscapeContent(
             ){
                 // Back to menu
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.navigate(Screen.Menu.route) },
                     modifier = Modifier.size(48.dp),
                     shape = CircleShape,
                     contentPadding = PaddingValues(1.dp)
@@ -654,7 +659,7 @@ fun LandscapeContent(
 
                 // Settings
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.navigate(Screen.Settings.route) },
                     modifier = Modifier.size(48.dp),
                     shape = CircleShape,
                     contentPadding = PaddingValues(1.dp)
@@ -703,8 +708,11 @@ fun LandscapeContent(
 
 @Preview
 @Composable
-fun Prev(){
-    val settingsViewModel: SettingsViewModel = viewModel()
-    val gameViewModel: GameViewModel = viewModel { GameViewModel(settingsViewModel) }
-    GameScreen(viewModel = gameViewModel)
+fun Prev() {
+    val settingsViewModel = SettingsViewModel() // Provide default values if necessary
+    val gameViewModel = GameViewModel(settingsViewModel)
+
+    val navController = rememberNavController()
+
+    GameScreen(viewModel = gameViewModel, navController = navController)
 }
