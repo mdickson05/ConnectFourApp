@@ -33,11 +33,11 @@ data class GameState(
     val turnText: String = "${playerOneName}'s Turn...",
     val currentTurn: PlayerType = PlayerType.ONE,
 
-    // Victory Info
-    val hasWon: Boolean = false,
+    // Game Info
+    val isPaused: Boolean = false,
 
     // Game mode
-    val gameMode: SharedEnums.GameMode = SharedEnums.GameMode.SINGLE
+    val gameMode: SharedEnums.GameMode = SharedEnums.GameMode.SINGLE,
 )
 
 // Function which converts boardSize enums into respective row integers
