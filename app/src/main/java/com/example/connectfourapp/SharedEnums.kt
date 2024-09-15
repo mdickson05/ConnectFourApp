@@ -7,7 +7,8 @@ sealed class SharedEnums {
         YELLOW,
         GREEN,
         ORANGE,
-        PINK
+        PINK,
+        AI
     }
 
     enum class GameMode {
