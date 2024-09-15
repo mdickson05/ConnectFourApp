@@ -4,5 +4,7 @@ data class PlayerStats(
     val playerName: String,
     val gamesPlayed: Int,
     val wins: Int,
-    val winRate: Float
+    val draws: Int,
+    val winRate: Float,
+    val profile: Int
 )

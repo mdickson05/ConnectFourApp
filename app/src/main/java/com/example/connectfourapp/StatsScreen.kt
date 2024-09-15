@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -106,7 +107,9 @@ fun LandscapeStatsContent(
 @Composable
 fun Header(onBackClick: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -145,7 +148,7 @@ fun PlayerStatsRowPortrait(playerStats: List<PlayerStats>) {
         // Singleplayer stats
         StatsSectionPortrait(
             title = "Singleplayer",
-            players = playerStats.filter { it.playerName == "Player 1 (single)" || it.playerName == "AI"}
+            players = playerStats.filter { it.playerName == "Player 1" || it.playerName == "AI"}
         )
 
         Divider()
@@ -154,7 +157,7 @@ fun PlayerStatsRowPortrait(playerStats: List<PlayerStats>) {
 
         StatsSectionPortrait(
             title = "Multiplayer",
-            players = playerStats.filter { it.playerName == "Player 1 (multi)" || it.playerName == "Player 2"}
+            players = playerStats.filter { it.playerName == "Player 1 " || it.playerName == "Player 2"}
         )
     }
 }
@@ -167,7 +170,7 @@ fun PlayerStatsRowLandscape(playerStats: List<PlayerStats>) {
     ) {
         StatsSectionLandscape(
             title = "Singleplayer",
-            players = playerStats.filter { it.playerName == "Player 1 (single)" || it.playerName == "AI"},
+            players = playerStats.filter { it.playerName == "Player 1" || it.playerName == "AI"},
             modifier = Modifier.weight(1f)
         )
 
@@ -180,7 +183,7 @@ fun PlayerStatsRowLandscape(playerStats: List<PlayerStats>) {
         )
         StatsSectionLandscape(
             title = "Multiplayer",
-            players = playerStats.filter { it.playerName == "Player 1 (multi)" || it.playerName == "Player 2"},
+            players = playerStats.filter { it.playerName == "Player 1 " || it.playerName == "Player 2"},
             modifier = Modifier.weight(1f)
         )
     }
@@ -215,7 +218,9 @@ fun StatsSectionPortrait(title: String, players: List<PlayerStats>) {
                     playerName = player.playerName,
                     gamesPlayed = player.gamesPlayed,
                     wins = player.wins,
-                    winRate = calculateWinRate(player.wins, player.gamesPlayed)
+                    draws = player.draws,
+                    winRate = calculateWinRate(player.wins, player.gamesPlayed),
+                    playerProfilePic = player.profile
                 )
             }
         }
@@ -250,7 +255,9 @@ fun StatsSectionLandscape(title: String, players: List<PlayerStats>, modifier: M
                     playerName = player.playerName,
                     gamesPlayed = player.gamesPlayed,
                     wins = player.wins,
-                    winRate = calculateWinRate(player.wins, player.gamesPlayed)
+                    draws = player.draws,
+                    winRate = calculateWinRate(player.wins, player.gamesPlayed),
+                    playerProfilePic = player.profile
                 )
             }
         }
@@ -259,35 +266,35 @@ fun StatsSectionLandscape(title: String, players: List<PlayerStats>, modifier: M
 
 
 @Composable
-fun PlayerStatsPortrait(playerName: String, gamesPlayed: Int, wins: Int, winRate: Float) {
+fun PlayerStatsPortrait(playerName: String, gamesPlayed: Int, wins: Int, draws: Int, winRate: Float, playerProfilePic: Int) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        PlayerProfilePicture(playerName = playerName, imageSize = 64.dp)
+        PlayerProfilePicture(playerName = playerName, playerProfilePic = playerProfilePic)
         PlayerName(playerName = playerName, fontSize = 20.sp)
-        PlayerStats(gamesPlayed = gamesPlayed, wins = wins, winRate = winRate, fontSize = 16.sp)
+        PlayerStats(gamesPlayed = gamesPlayed, wins = wins, draws = draws, winRate = winRate, fontSize = 16.sp)
     }
 }
 
 @Composable
-fun PlayerStatsLandscape(playerName: String, gamesPlayed: Int, wins: Int, winRate: Float) {
+fun PlayerStatsLandscape(playerName: String, gamesPlayed: Int, wins: Int, draws: Int, winRate: Float, playerProfilePic: Int) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = Modifier.padding(horizontal = 8.dp)
     ) {
-        PlayerProfilePicture(playerName = playerName, imageSize = 48.dp)
+        PlayerProfilePicture(playerName = playerName, playerProfilePic = playerProfilePic)
         PlayerName(playerName = playerName, fontSize = 18.sp)
-        PlayerStats(gamesPlayed = gamesPlayed, wins = wins, winRate = winRate, fontSize = 14.sp)
+        PlayerStats(gamesPlayed = gamesPlayed, wins = wins, draws = draws, winRate = winRate, fontSize = 14.sp)
     }
 }
 
 @Composable
-fun PlayerProfilePicture(playerName: String, imageSize: Dp) {
+fun PlayerProfilePicture(playerProfilePic: Int, playerName: String) {
     Image(
-        modifier = Modifier.size(imageSize),
-        imageVector = Icons.Default.AccountCircle,
+        modifier = Modifier.size(48.dp),
+        painter = painterResource(id = playerProfilePic),
         contentDescription = "$playerName Profile Pic"
     )
 }
@@ -296,9 +303,10 @@ fun PlayerName(playerName: String, fontSize: TextUnit) {
     Text(text = playerName, fontSize = fontSize, fontWeight = FontWeight.Bold)
 }
 @Composable
-fun PlayerStats(gamesPlayed: Int, wins: Int, winRate: Float, fontSize: TextUnit) {
+fun PlayerStats(gamesPlayed: Int, wins: Int, draws: Int, winRate: Float, fontSize: TextUnit) {
     Text(text = "Games: $gamesPlayed", fontSize = fontSize)
     Text(text = "Wins: $wins", fontSize = fontSize)
+    Text(text = "Draws: $draws", fontSize = fontSize)
     Text(text = "Win Rate: ${winRate}%", fontSize = fontSize)
 }
 
