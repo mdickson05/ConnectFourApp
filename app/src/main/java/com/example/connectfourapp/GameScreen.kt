@@ -48,7 +48,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.connectfourapp.ui.theme.BoardBlue
@@ -261,8 +260,8 @@ fun PortraitContent(
                                     enter = scaleIn(tween(1000))
                                 ) {
                                     when (playerType) {
-                                        PlayerType.ONE -> Disc(playerColour = SharedEnums.PlayerColour.RED)
-                                        PlayerType.TWO -> Disc(playerColour = SharedEnums.PlayerColour.YELLOW)
+                                        PlayerType.ONE -> Disc(playerColour = state.playerOneColour)
+                                        PlayerType.TWO -> Disc(playerColour = state.playerTwoColour)
                                         PlayerType.AI -> Disc(playerColour = SharedEnums.PlayerColour.ORANGE)
                                         PlayerType.NONE -> {}
                                     }
@@ -594,8 +593,8 @@ fun LandscapeContent(
                                         enter = scaleIn(tween(1000))
                                     ) {
                                         when (playerType) {
-                                            PlayerType.ONE -> Disc(playerColour = SharedEnums.PlayerColour.RED)
-                                            PlayerType.TWO -> Disc(playerColour = SharedEnums.PlayerColour.YELLOW)
+                                            PlayerType.ONE -> Disc(playerColour = state.playerOneColour)
+                                            PlayerType.TWO -> Disc(playerColour = state.playerTwoColour)
                                             PlayerType.AI -> Disc(playerColour = SharedEnums.PlayerColour.ORANGE)
                                             PlayerType.NONE -> {}
                                         }

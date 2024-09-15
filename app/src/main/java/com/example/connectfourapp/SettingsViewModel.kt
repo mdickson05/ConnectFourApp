@@ -59,6 +59,11 @@ private val profileImages = listOf(
     fun getPlayerOneProfileImage(): Int = profileImages[playerOneProfileIndex]
     fun getPlayerTwoProfileImage(): Int = profileImages[playerTwoProfileIndex]
 
+    fun onBackButtonClicked(updateGameState: () -> Unit) {
+        // Call the provided function to update the game state
+        updateGameState()
+    }
+
     //---------- Mutators
     fun updatePlayerOneIsExpanded(){ // Toggles if Player one drop down menu is down or not
         playerOneIsExpanded = !playerOneIsExpanded // Opposite of what it is

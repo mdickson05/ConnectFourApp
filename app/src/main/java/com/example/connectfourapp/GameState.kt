@@ -39,7 +39,7 @@ data class GameState(
 )
 
 // Function which converts boardSize enums into respective row integers
-private fun getRows(boardSize: SharedEnums.BoardSize) : Int {
+fun getRows(boardSize: SharedEnums.BoardSize) : Int {
     val rows = when(boardSize) {
         SharedEnums.BoardSize.SMALL -> 5
         SharedEnums.BoardSize.STANDARD -> 6
@@ -49,7 +49,7 @@ private fun getRows(boardSize: SharedEnums.BoardSize) : Int {
 }
 
 // Function which converts boardSize enums into respective column integers
-private fun getCols(boardSize: SharedEnums.BoardSize) : Int {
+fun getCols(boardSize: SharedEnums.BoardSize) : Int {
     val cols = when(boardSize) {
         SharedEnums.BoardSize.SMALL -> 6
         SharedEnums.BoardSize.STANDARD -> 7

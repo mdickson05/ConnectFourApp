@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
                         GameScreen(viewModel = gameViewModel,  navController = navController)
                     }
                     composable(Screen.Settings.route) {
-                        SettingsScreen(viewModel = settingsViewModel, navController = navController)
+                        SettingsScreen(viewModel = settingsViewModel, navController = navController, gameViewModel = gameViewModel)
                     }
                 }
             }
