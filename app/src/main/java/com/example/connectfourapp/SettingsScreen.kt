@@ -58,7 +58,8 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    gameViewModel: GameViewModel
 ){
     var orientation by remember { mutableIntStateOf(Configuration.ORIENTATION_PORTRAIT) }
     val configuration = LocalConfiguration.current
@@ -72,10 +73,10 @@ fun SettingsScreen(
 
     when (orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
-            LandscapeContent(viewModel, navController)
+            LandscapeContent(viewModel, navController, gameViewModel)
         }
         else -> {
-            PortraitContent(viewModel, navController)
+            PortraitContent(viewModel, navController, gameViewModel)
         }
     }
 }
@@ -103,7 +104,8 @@ val modeOptionsDesc = listOf("(Player 1 vs. AI)", "(Player 1 vs. Player 2)")
 @Composable
 fun PortraitContent(
     viewModel: SettingsViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    gameViewModel: GameViewModel
 ) {
     Column(
         modifier = Modifier
@@ -122,7 +124,10 @@ fun PortraitContent(
         ) {
             // Go back to menu button
             Button(
-                onClick = { navController.popBackStack() },
+                onClick = {
+                    viewModel.onBackButtonClicked { gameViewModel.updateGameState() }
+                    navController.popBackStack()
+                },
                 modifier = Modifier.size(36.dp),
                 shape = CircleShape,
                 contentPadding = PaddingValues(1.dp),
@@ -446,7 +451,8 @@ fun PortraitContent(
 @Composable
 fun LandscapeContent(
     viewModel: SettingsViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    gameViewModel: GameViewModel
 ) {
     Log.d("SettingsScreen", "Current Orientation: ${viewModel.playerOneColour}")
     Column(
@@ -479,7 +485,10 @@ fun LandscapeContent(
                 ) {
                     // Go back to menu button
                     Button(
-                        onClick = { navController.popBackStack() },
+                        onClick = {
+                            viewModel.onBackButtonClicked { gameViewModel.updateGameState() }
+                            navController.popBackStack()
+                        },
                         modifier = Modifier.size(36.dp),
                         shape = CircleShape,
                         contentPadding = PaddingValues(1.dp),
@@ -818,7 +827,8 @@ fun LandscapeContent(
 @Composable
 fun SettingsPrev(){
     val viewModel = viewModel<SettingsViewModel>()
+    val gameViewModel: GameViewModel = viewModel { GameViewModel(viewModel) }
 
     val navController = rememberNavController()
-    SettingsScreen(viewModel = viewModel, navController = navController)
+    SettingsScreen(viewModel = viewModel, navController = navController, gameViewModel = gameViewModel)
 }

@@ -9,10 +9,10 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
 
     var state by mutableStateOf(generateState())
 
-    val boardItems: MutableMap<Int, PlayerType> = generateBoardItems()
+    var boardItems by mutableStateOf(generateBoardItems())
 
-    private fun generateBoardItems(): MutableMap<Int, PlayerType> {
-        return (1..(state.rows * state.cols)).associateWith { PlayerType.NONE }.toMutableMap()
+    private fun generateBoardItems(): Map<Int, PlayerType> {
+        return (1..(state.rows * state.cols)).associateWith { PlayerType.NONE }
     }
 
     private fun generateState() : GameState
@@ -30,9 +30,23 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
             playerOneColour = settingsViewModel.playerOneColour,
             playerTwoColour = settingsViewModel.playerTwoColour,
             gameMode = settingsViewModel.selectedModeOption,
-            boardSize = settingsViewModel.selectedBoardOption
+            boardSize = settingsViewModel.selectedBoardOption,
+            rows = getRows(settingsViewModel.selectedBoardOption),
+            cols = getCols(settingsViewModel.selectedBoardOption),
         )
         return state
+    }
+
+    fun updateGameState() {
+
+        state = generateState()
+
+        // regenerate board if board size has changed
+        if (state.rows * state.cols != boardItems.size) {
+            boardItems = generateBoardItems()
+        }
+        // Reset the game state
+        gameReset()
     }
 
     fun onAction(action: GameUserAction)
@@ -48,7 +62,7 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
                 // STEP 1: Generate AI move
                 val move: Int = generateAIMove()
 
-                boardItems[move] = PlayerType.AI
+                boardItems = boardItems.toMutableMap().apply { this[move] = PlayerType.AI }
                 state = state.copy(
                     movesMade = state.movesMade + 1
                 )
@@ -99,7 +113,7 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
         if(!state.isPaused)
         {
             boardItems.forEach{ (i, _) ->
-                boardItems[i] = PlayerType.NONE
+                boardItems = boardItems.toMutableMap().apply { this[i] = PlayerType.NONE }
             }
             state = state.copy(
                 movesMade = 0,
@@ -126,7 +140,7 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
             if(isSinglePlayer())
             {
                 // STEP 1: Player makes the turn
-                boardItems[cellNum] = PlayerType.ONE
+                boardItems = boardItems.toMutableMap().apply { this[cellNum] = PlayerType.ONE }
                 state = state.copy(
                     movesMade = state.movesMade + 1
                 )
@@ -166,9 +180,8 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
             // IF Multiplayer
             else {
                 if (state.currentTurn == PlayerType.ONE) {
-
                     // STEP 1: Player 1 makes the turn
-                    boardItems[cellNum] = PlayerType.ONE
+                    boardItems = boardItems.toMutableMap().apply { this[cellNum] = PlayerType.ONE }
                     state = state.copy(
                         movesMade = state.movesMade + 1
                     )
@@ -206,7 +219,7 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
                 else if (state.currentTurn == PlayerType.TWO) {
 
                     // STEP 1: P2 makes the turn
-                    boardItems[cellNum] = PlayerType.TWO
+                    boardItems = boardItems.toMutableMap().apply { this[cellNum] = PlayerType.TWO }
                     state = state.copy(
                         movesMade = state.movesMade + 1
                     )
