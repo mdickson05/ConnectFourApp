@@ -81,7 +81,7 @@ private val profileImages = listOf(
     }
 
     fun updatePlayerTwoColour(colour : String){
-        playerOneColour = SharedEnums.PlayerColour.valueOf(colour.uppercase())
+        playerTwoColour = SharedEnums.PlayerColour.valueOf(colour.uppercase())
     }
 
     fun updateSelectedBoardOption(option : SharedEnums.BoardSize){
