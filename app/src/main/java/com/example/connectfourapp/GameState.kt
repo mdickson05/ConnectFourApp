@@ -7,7 +7,8 @@ data class GameState(
     val cols: Int = getCols(boardSize),
 
     // Stats tracking
-    val playerOneWinCount: Int = 0,
+    val playerOneSPWinCount: Int = 0,
+    val playerOneMPWinCount: Int = 0,
     val playerTwoWinCount: Int = 0,
     val aiWinCount: Int = 0,
     val spDrawCount: Int = 0,
