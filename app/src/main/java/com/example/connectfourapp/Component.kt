@@ -2,6 +2,7 @@ package com.example.connectfourapp
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -21,13 +22,14 @@ fun Disc(playerColour: SharedEnums.PlayerColour? = null) {
         SharedEnums.PlayerColour.PINK -> PinkDisc
         SharedEnums.PlayerColour.GREEN -> Color.Green
         SharedEnums.PlayerColour.ORANGE -> OrangeDisc
+        SharedEnums.PlayerColour.AI -> Color.DarkGray
         null -> GreyBG
     }
 
     Box(
         modifier = Modifier
-            .size(42.dp)
-            .padding(4.dp)
+            .fillMaxSize()
+            .padding(6.dp)
             .background(color, CircleShape)
     )
 }
