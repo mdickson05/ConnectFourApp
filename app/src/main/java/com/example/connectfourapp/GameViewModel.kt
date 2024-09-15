@@ -23,16 +23,19 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
         // Update GameState based on settingsViewModel
 
         state = state.copy(
+
+            boardSize = settingsViewModel.selectedBoardOption,
+            rows = getRows(settingsViewModel.selectedBoardOption),
+            cols = getCols(settingsViewModel.selectedBoardOption),
+
             playerOneName = settingsViewModel.playerOneName,
             playerTwoName = settingsViewModel.playerTwoName,
             playerOneProfileImage = settingsViewModel.getPlayerOneProfileImage(),
             playerTwoProfileImage = settingsViewModel.getPlayerTwoProfileImage(),
+
             playerOneColour = settingsViewModel.playerOneColour,
             playerTwoColour = settingsViewModel.playerTwoColour,
-            gameMode = settingsViewModel.selectedModeOption,
-            boardSize = settingsViewModel.selectedBoardOption,
-            rows = getRows(settingsViewModel.selectedBoardOption),
-            cols = getCols(settingsViewModel.selectedBoardOption),
+            gameMode = settingsViewModel.selectedModeOption
         )
         return state
     }
@@ -118,24 +121,36 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
             state = state.copy(
                 movesMade = 0,
                 turnText = "${state.playerOneName}'s turn...",
-                currentTurn = PlayerType.ONE
+                currentTurn = PlayerType.ONE,
+                invalidMessage = ""
             )
         }
     }
 
-
     private fun addValueToBoard(cellNum: Int) {
         // IF square is already taken...
         if(boardItems[cellNum] != PlayerType.NONE) {
+            state = state.copy(
+                invalidMessage = "Invalid move: square already taken"
+            )
             return // do nothing
         }
         // If the row above the chosen square is empty
         else if(boardItems[cellNum + state.cols] == PlayerType.NONE) {
+            state = state.copy(
+                invalidMessage = "Invalid move: No square below"
+            )
             return // do nothing
         }
         // If the move is valid...
         else
         {
+            if(state.invalidMessage.isNotEmpty())
+            {
+                state = state.copy(
+                    invalidMessage = ""
+                )
+            }
             // IF SINGLE PLAYER
             if(isSinglePlayer())
             {
@@ -353,8 +368,4 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
         // If move is not in the bottom row, check if the position below is filled
         return boardItems[move + state.cols] != PlayerType.NONE
     }
-
-    //Charlie: added getter to get access to games state
-    val gameState: GameState get() = state
-
 }
