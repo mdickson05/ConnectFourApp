@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,14 +18,25 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.connectfourapp.ui.theme.CooperBTBold
 
+
 @Composable
-fun StatsScreen(onBackClick: () -> Unit = {}) {
+fun StatsScreen(
+    //settingsViewModel: SettingsViewModel,
+    statsViewModel: StatsViewModel,
+    gameViewModel: GameViewModel,
+    onBackClick: () -> Unit = {}
+) {
     val configuration = LocalConfiguration.current
     var orientation by remember { mutableStateOf(configuration.orientation) }
+
+    // Observe player stats from StatsViewModel
+    val playerStats by statsViewModel.playerStats.observeAsState(emptyList())
 
     // Update orientation state when the configuration changes
     LaunchedEffect(configuration) {
@@ -32,14 +44,28 @@ fun StatsScreen(onBackClick: () -> Unit = {}) {
             .collect { orientation = it }
     }
 
+    // Access game state from the ViewModel and update stats
+    val gameState = gameViewModel.state
+    statsViewModel.updateStats(gameState) // This updates the stats
+
+
     when (orientation) {
-        Configuration.ORIENTATION_LANDSCAPE -> LandscapeStatsContent(onBackClick)
-        else -> PortraitStatsContent(onBackClick)
+        Configuration.ORIENTATION_LANDSCAPE -> LandscapeStatsContent(
+            onBackClick,
+            playerStats = playerStats
+        )
+        else -> PortraitStatsContent(
+            onBackClick,
+            playerStats = playerStats
+        )
     }
 }
 
 @Composable
-fun PortraitStatsContent(onBackClick: () -> Unit) {
+fun PortraitStatsContent(
+    onBackClick: () -> Unit,
+    playerStats: List<PlayerStats> // Pass the playerStats list
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -55,13 +81,16 @@ fun PortraitStatsContent(onBackClick: () -> Unit) {
             modifier = Modifier.fillMaxHeight(), // Take full height of the remaining space
             verticalArrangement = Arrangement.SpaceEvenly // Evenly space the content by a fixed amount
         ) {
-            PlayerStatsRowPortrait()
+            PlayerStatsRowPortrait(playerStats)
         }
     }
 }
 
 @Composable
-fun LandscapeStatsContent(onBackClick: () -> Unit) {
+fun LandscapeStatsContent(
+    onBackClick: () -> Unit,
+    playerStats: List<PlayerStats> // Pass the playerStats list
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,14 +99,14 @@ fun LandscapeStatsContent(onBackClick: () -> Unit) {
     ) {
         Header(onBackClick)
         Spacer(modifier = Modifier.height(16.dp))
-        PlayerStatsRowLandscape()
+        PlayerStatsRowLandscape(playerStats)
     }
 }
 
 @Composable
 fun Header(onBackClick: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -108,24 +137,39 @@ fun BackButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun PlayerStatsRowPortrait() {
+fun PlayerStatsRowPortrait(playerStats: List<PlayerStats>) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(46.dp)
     ) {
-        StatsSectionPortrait("Singleplayer", listOf("Player 1", "AI"))
+        // Singleplayer stats
+        StatsSectionPortrait(
+            title = "Singleplayer",
+            players = playerStats.filter { it.playerName == "Player 1 (single)" || it.playerName == "AI"}
+        )
+
         Divider()
-        StatsSectionPortrait("Multiplayer", listOf("Player 1", "Player 2"))
+
+        // Multiplayer stats
+
+        StatsSectionPortrait(
+            title = "Multiplayer",
+            players = playerStats.filter { it.playerName == "Player 1 (multi)" || it.playerName == "Player 2"}
+        )
     }
 }
 
 @Composable
-fun PlayerStatsRowLandscape() {
+fun PlayerStatsRowLandscape(playerStats: List<PlayerStats>) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        StatsSectionLandscape("Singleplayer", listOf("Player 1", "AI"), Modifier.weight(1f))
+        StatsSectionLandscape(
+            title = "Singleplayer",
+            players = playerStats.filter { it.playerName == "Player 1 (single)" || it.playerName == "AI"},
+            modifier = Modifier.weight(1f)
+        )
 
         // Vertical Divider
         Divider(
@@ -134,13 +178,17 @@ fun PlayerStatsRowLandscape() {
                 .width(1.dp)
                 .background(Color.Gray)
         )
-        StatsSectionLandscape("Multiplayer", listOf("Player 1", "Player 2"), Modifier.weight(1f))
+        StatsSectionLandscape(
+            title = "Multiplayer",
+            players = playerStats.filter { it.playerName == "Player 1 (multi)" || it.playerName == "Player 2"},
+            modifier = Modifier.weight(1f)
+        )
     }
 }
 
 
 @Composable
-fun StatsSectionPortrait(title: String, players: List<String>) {
+fun StatsSectionPortrait(title: String, players: List<PlayerStats>) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -152,7 +200,7 @@ fun StatsSectionPortrait(title: String, players: List<String>) {
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "(${players.joinToString(" vs ")})",
+            text = "(${players.joinToString(" vs ") { it.playerName }})",
             fontSize = 16.sp,
             fontStyle = FontStyle.Italic
         )
@@ -160,16 +208,22 @@ fun StatsSectionPortrait(title: String, players: List<String>) {
         // Display players in a Column for portrait mode
         Row(
             modifier = Modifier.fillMaxWidth(),
-//            verticalArrangement = Arrangement.spacedBy(8.dp)
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            players.forEach { PlayerStatsPortrait(it) }
+            players.forEach { player ->
+                PlayerStatsPortrait(
+                    playerName = player.playerName,
+                    gamesPlayed = player.gamesPlayed,
+                    wins = player.wins,
+                    winRate = calculateWinRate(player.wins, player.gamesPlayed)
+                )
+            }
         }
     }
 }
 
 @Composable
-fun StatsSectionLandscape(title: String, players: List<String>, modifier: Modifier = Modifier) {
+fun StatsSectionLandscape(title: String, players: List<PlayerStats>, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.padding(horizontal = 8.dp), // Use the dynamic modifier
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -181,7 +235,7 @@ fun StatsSectionLandscape(title: String, players: List<String>, modifier: Modifi
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "(${players.joinToString(" vs ")})",
+            text = "(${players.joinToString(" vs ") { it.playerName }})",
             fontSize = 16.sp,
             fontStyle = FontStyle.Italic
         )
@@ -191,59 +245,88 @@ fun StatsSectionLandscape(title: String, players: List<String>, modifier: Modifi
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            players.forEach { PlayerStatsLandscape(it) }
+            players.forEach { player ->
+                PlayerStatsLandscape(
+                    playerName = player.playerName,
+                    gamesPlayed = player.gamesPlayed,
+                    wins = player.wins,
+                    winRate = calculateWinRate(player.wins, player.gamesPlayed)
+                )
+            }
         }
-        //Divider()
     }
 }
 
 
 @Composable
-fun PlayerStatsPortrait(playerName: String) {
+fun PlayerStatsPortrait(playerName: String, gamesPlayed: Int, wins: Int, winRate: Float) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Image(
-            modifier = Modifier.size(64.dp),
-            imageVector = Icons.Default.AccountCircle,
-            contentDescription = "$playerName Profile Pic"
-        )
-        Text(text = playerName, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Text(text = "Games: 0")
-        Text(text = "Wins: 0")
-        Text(text = "Win Rate: 0%")
+        PlayerProfilePicture(playerName = playerName, imageSize = 64.dp)
+        PlayerName(playerName = playerName, fontSize = 20.sp)
+        PlayerStats(gamesPlayed = gamesPlayed, wins = wins, winRate = winRate, fontSize = 16.sp)
     }
 }
 
 @Composable
-fun PlayerStatsLandscape(playerName: String) {
+fun PlayerStatsLandscape(playerName: String, gamesPlayed: Int, wins: Int, winRate: Float) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = Modifier.padding(horizontal = 8.dp)
     ) {
-        Image(
-            modifier = Modifier.size(48.dp), // Smaller size for landscape
-            imageVector = Icons.Default.AccountCircle,
-            contentDescription = "$playerName Profile Pic"
-        )
-        Text(text = playerName, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-        Text(text = "Games: 0", fontSize = 14.sp)
-        Text(text = "Wins: 0", fontSize = 14.sp)
-        Text(text = "Win Rate: 0%", fontSize = 14.sp)
+        PlayerProfilePicture(playerName = playerName, imageSize = 48.dp)
+        PlayerName(playerName = playerName, fontSize = 18.sp)
+        PlayerStats(gamesPlayed = gamesPlayed, wins = wins, winRate = winRate, fontSize = 14.sp)
     }
 }
 
-@Preview(name = "Portrait", showBackground = true)
 @Composable
-fun PortraitStatsPreview() {
-    StatsScreen(onBackClick = {})
+fun PlayerProfilePicture(playerName: String, imageSize: Dp) {
+    Image(
+        modifier = Modifier.size(imageSize),
+        imageVector = Icons.Default.AccountCircle,
+        contentDescription = "$playerName Profile Pic"
+    )
+}
+@Composable
+fun PlayerName(playerName: String, fontSize: TextUnit) {
+    Text(text = playerName, fontSize = fontSize, fontWeight = FontWeight.Bold)
+}
+@Composable
+fun PlayerStats(gamesPlayed: Int, wins: Int, winRate: Float, fontSize: TextUnit) {
+    Text(text = "Games: $gamesPlayed", fontSize = fontSize)
+    Text(text = "Wins: $wins", fontSize = fontSize)
+    Text(text = "Win Rate: ${winRate}%", fontSize = fontSize)
 }
 
-@Preview(name = "Landscape", showBackground = true, widthDp = 720, heightDp = 360)
-@Composable
-fun LandscapeStatsPreview() {
-    StatsScreen(onBackClick = {})
+fun calculateWinRate(wins: Int, gamesPlayed: Int): Float {
+    return if (gamesPlayed > 0) (wins.toFloat() / gamesPlayed) * 100 else 0f
 }
+
+
+
+
+//@Preview(name = "Portrait", showBackground = true)
+//@Composable
+//fun PortraitStatsPreview() {
+//    StatsScreen(
+//        gameViewModel = MockGameViewModel(),
+//        statsViewModel = MockStatsViewModel(), // Pass MockStatsViewModel
+//        onBackClick = {}
+//    )
+//}
+//
+//@Preview(name = "Landscape", showBackground = true, widthDp = 720, heightDp = 360)
+//@Composable
+//fun LandscapeStatsPreview() {
+//    StatsScreen(
+//        gameViewModel = MockGameViewModel(),
+//        statsViewModel = MockStatsViewModel(), // Pass MockStatsViewModel
+//        onBackClick = {}
+//    )
+//}
+
 

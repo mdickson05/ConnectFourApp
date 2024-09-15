@@ -136,7 +136,7 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
                 {
                     state = state.copy(
                         turnText = "${state.playerOneName} wins",
-                        playerOneWinCount = state.playerOneWinCount + 1,
+                        playerOneSPWinCount = state.playerOneSPWinCount + 1,
                         currentTurn = PlayerType.NONE,
                         spGamesPlayed = state.spGamesPlayed + 1
                     )
@@ -178,7 +178,7 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
                     {
                         state = state.copy(
                             turnText = "${state.playerOneName} wins",
-                            playerOneWinCount = state.playerOneWinCount + 1,
+                            playerOneMPWinCount = state.playerOneMPWinCount + 1,
                             currentTurn = PlayerType.NONE,
                             mpGamesPlayed = state.mpGamesPlayed + 1
                         )
@@ -341,5 +341,7 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
         return boardItems[move + state.cols] != PlayerType.NONE
     }
 
+    //Charlie: added getter to get access to games state
+    val gameState: GameState get() = state
 
 }
