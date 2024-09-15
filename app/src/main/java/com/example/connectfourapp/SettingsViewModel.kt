@@ -81,12 +81,22 @@ private val profileImages = listOf(
         playerTwoName = name
     }
 
-    fun updatePlayerOneColour(colour : String){
-        playerOneColour = SharedEnums.PlayerColour.valueOf(colour.uppercase())
+    fun updatePlayerOneColour(colour: String) {
+        val newColour = SharedEnums.PlayerColour.valueOf(colour.uppercase())
+        if (newColour != playerTwoColour) {
+            playerOneColour = newColour
+        } else {
+            //nothing colour already taken by player 2
+        }
     }
 
-    fun updatePlayerTwoColour(colour : String){
-        playerTwoColour = SharedEnums.PlayerColour.valueOf(colour.uppercase())
+    fun updatePlayerTwoColour(colour: String) {
+        val newColour = SharedEnums.PlayerColour.valueOf(colour.uppercase())
+        if (newColour != playerOneColour) {
+            playerTwoColour = newColour
+        } else {
+            // Nothing colour already taken by player 1
+        }
     }
 
     fun updateSelectedBoardOption(option : SharedEnums.BoardSize){
