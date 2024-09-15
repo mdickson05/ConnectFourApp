@@ -173,12 +173,24 @@ fun PortraitContent(
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.SpaceEvenly
             ){
-                Image(
-                    modifier = Modifier
-                        .size(64.dp),
-                    painter = painterResource(state.playerTwoProfileImage),
-                    contentDescription = "${state.playerTwoName}}/AI Profile Pic"
-                )
+                if(state.gameMode == SharedEnums.GameMode.MULTI)
+                {
+                    Image(
+                        modifier = Modifier
+                            .size(64.dp),
+                        painter = painterResource(state.playerTwoProfileImage),
+                        contentDescription = "${state.playerTwoName} profile pic"
+                    )
+                }
+                else
+                {
+                    Image(
+                        modifier = Modifier
+                            .size(64.dp),
+                        painter = painterResource(R.drawable.profile_ai),
+                        contentDescription = "AI profile pic"
+                    )
+                }
 
                 Column (
                     horizontalAlignment = Alignment.End
@@ -262,7 +274,7 @@ fun PortraitContent(
                                     when (playerType) {
                                         PlayerType.ONE -> Disc(playerColour = state.playerOneColour)
                                         PlayerType.TWO -> Disc(playerColour = state.playerTwoColour)
-                                        PlayerType.AI -> Disc(playerColour = SharedEnums.PlayerColour.ORANGE)
+                                        PlayerType.AI -> Disc(playerColour = SharedEnums.PlayerColour.AI)
                                         PlayerType.NONE -> {}
                                     }
                                 }
@@ -493,12 +505,24 @@ fun LandscapeContent(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ){
-                Image(
-                    modifier = Modifier
-                        .size(64.dp),
-                    painter = painterResource(state.playerTwoProfileImage),
-                    contentDescription = "${state.playerTwoName}/AI Profile Pic"
-                )
+                if(state.gameMode == SharedEnums.GameMode.MULTI)
+                {
+                    Image(
+                        modifier = Modifier
+                            .size(64.dp),
+                        painter = painterResource(state.playerTwoProfileImage),
+                        contentDescription = "${state.playerTwoName} profile pic"
+                    )
+                }
+                else
+                {
+                    Image(
+                        modifier = Modifier
+                            .size(64.dp),
+                        painter = painterResource(R.drawable.profile_ai),
+                        contentDescription = "AI profile pic"
+                    )
+                }
 
                 Column (
                     horizontalAlignment = Alignment.CenterHorizontally
