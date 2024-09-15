@@ -50,6 +50,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val settingsViewModel: SettingsViewModel = viewModel()
                 val gameViewModel: GameViewModel = viewModel { GameViewModel(settingsViewModel) }
+                val statsViewModel: StatsViewModel = viewModel()
 
                 NavHost(
                     navController = navController,
@@ -59,7 +60,11 @@ class MainActivity : ComponentActivity() {
                         MenuScreen(navController)
                     }
                     composable(Screen.Stats.route) {
-                        StatsScreen(onBackClick = { navController.popBackStack() })
+                        StatsScreen(
+                            gameViewModel = gameViewModel,
+                            statsViewModel = statsViewModel,
+                            onBackClick = { navController.popBackStack() }
+                        )
                     }
                     composable(Screen.Game.route) {
                         GameScreen(viewModel = gameViewModel,  navController = navController)
@@ -69,16 +74,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-
-                // MenuScreen()
-
-//                SettingsScreen(
-//                    viewModel = settingsViewModel
-//                )
-                // val settingsViewModel: SettingsViewModel = viewModel()
-                // val gameViewModel: GameViewModel = viewModel { GameViewModel(settingsViewModel) }
-                // GameScreen(viewModel = gameViewModel)
-                //StatsScreen()
         }
     }
 }

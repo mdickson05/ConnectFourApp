@@ -134,15 +134,19 @@ fun PortraitContent(
                 ) {
                     val winRate: Double = if(state.gameMode == SharedEnums.GameMode.SINGLE)
                     {
-                        (state.playerOneWinCount.toDouble() / state.spGamesPlayed.toDouble()) * 100
+                        (state.playerOneSPWinCount.toDouble() / state.spGamesPlayed.toDouble()) * 100
                     }
                     else
                     {
-                        (state.playerOneWinCount.toDouble() / state.mpGamesPlayed.toDouble()) * 100
+                        (state.playerOneMPWinCount.toDouble() / state.mpGamesPlayed.toDouble()) * 100
                     }
                     val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
                     Text(text = state.playerOneName, fontSize = 20.sp)
-                    Text(text = "Wins: " + state.playerOneWinCount)
+                    Text(text = "Wins: " + if (state.gameMode == SharedEnums.GameMode.SINGLE) {
+                        state.playerOneSPWinCount
+                    } else {
+                        state.playerOneMPWinCount
+                    })
                     if(state.gameMode == SharedEnums.GameMode.SINGLE)
                     {
                         if(state.spGamesPlayed != 0)
@@ -451,15 +455,20 @@ fun LandscapeContent(
                 ) {
                     val winRate: Double = if(state.gameMode == SharedEnums.GameMode.SINGLE)
                     {
-                        (state.playerOneWinCount.toDouble() / state.spGamesPlayed.toDouble()) * 100
+                        (state.playerOneSPWinCount.toDouble() / state.spGamesPlayed.toDouble()) * 100
                     }
                     else
                     {
-                        (state.playerOneWinCount.toDouble() / state.mpGamesPlayed.toDouble()) * 100
+                        (state.playerOneMPWinCount.toDouble() / state.mpGamesPlayed.toDouble()) * 100
                     }
                     val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
                     Text(text = state.playerOneName, fontSize = 20.sp)
-                    Text(text = "Wins: " + state.playerOneWinCount)
+                    Text(text = "Wins: " + if (state.gameMode == SharedEnums.GameMode.SINGLE) {
+                        state.playerOneSPWinCount
+                    } else {
+                        state.playerOneMPWinCount
+                    })
+
                     if(state.gameMode == SharedEnums.GameMode.SINGLE)
                     {
                         if(state.spGamesPlayed != 0)
