@@ -28,6 +28,7 @@ data class GameState(
 
 
     // Turn Info
+    val invalidMessage: String = "",
     val turnText: String = "${playerOneName}'s Turn...",
     val currentTurn: PlayerType = PlayerType.ONE,
 
