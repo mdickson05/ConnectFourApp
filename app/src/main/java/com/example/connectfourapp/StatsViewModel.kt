@@ -17,12 +17,17 @@ class StatsViewModel : ViewModel() {
         val mpGamesPlayed = gameState.mpGamesPlayed
         val spDrawCount = gameState.spDrawCount
         val mpDrawCount = gameState.mpDrawCount
+        val aiWins = gameState.aiWinCount
+
+        val playerOneProfileImage = gameState.playerOneProfileImage
+        val playerTwoProfileImage = gameState.playerTwoProfileImage
+        val aiProfilePic = R.drawable.profile_ai
 
         _playerStats.value = listOf(
-            PlayerStats("Player 1 (single)", spGamesPlayed, playerOneSPWins, calculateWinRate(playerOneSPWins, spGamesPlayed)),
-            PlayerStats("AI", spGamesPlayed, spDrawCount, calculateWinRate(spDrawCount, spGamesPlayed)),
-            PlayerStats("Player 1 (multi)", mpGamesPlayed, playerOneMPWins, calculateWinRate(playerOneMPWins, mpGamesPlayed)),
-            PlayerStats("Player 2", mpGamesPlayed, playerTwoWins, calculateWinRate(playerTwoWins, mpGamesPlayed))
+            PlayerStats("Player 1", spGamesPlayed, playerOneSPWins, spDrawCount,calculateWinRate(playerOneSPWins, spGamesPlayed), playerOneProfileImage),
+            PlayerStats("AI", spGamesPlayed, aiWins, spDrawCount, calculateWinRate(aiWins, spGamesPlayed), aiProfilePic),
+            PlayerStats("Player 1 ", mpGamesPlayed, playerOneMPWins, mpDrawCount, calculateWinRate(playerOneMPWins, mpGamesPlayed), playerOneProfileImage),
+            PlayerStats("Player 2", mpGamesPlayed, playerTwoWins, mpDrawCount, calculateWinRate(playerTwoWins, mpGamesPlayed), playerTwoProfileImage)
 
         )
     }
