@@ -101,10 +101,10 @@ fun PortraitContent(
 
     // Column to hold everything in
     Column (
-      modifier = Modifier
-          .fillMaxSize()
-          .background(GreyBG)
-          .padding(horizontal = 30.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(GreyBG)
+            .padding(horizontal = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
@@ -465,7 +465,15 @@ fun LandscapeContent(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if(state.invalidMessage.isNotEmpty())
+                    {
+                        Text(text = state.invalidMessage)
+                    }
+                    Text(text = state.turnText)
+                }
             }
 
             // Player 1 + stats
