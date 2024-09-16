@@ -1,6 +1,7 @@
 package com.example.connectfourapp
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -33,16 +34,23 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.FirebaseApp
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : ComponentActivity() {
+    private lateinit var firebaseRef : DatabaseReference
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
+        firebaseRef = FirebaseDatabase.getInstance().getReference()
         enableEdgeToEdge()
         setContent {
             ConnectFourAppTheme {
@@ -56,7 +64,7 @@ class MainActivity : ComponentActivity() {
                     startDestination = Screen.Menu.route
                 ) {
                     composable(Screen.Menu.route) {
-                        MenuScreen(navController)
+                        MenuScreen(navController, firebaseRef)
                     }
                     composable(Screen.Stats.route) {
                         StatsScreen(
@@ -79,7 +87,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun MenuScreen(navController: NavHostController) {
+fun MenuScreen(navController: NavHostController, firebaseRef: DatabaseReference) {
     Box( // Box to align text at button and title and buttons in middle
         modifier = Modifier
             .fillMaxSize()
@@ -107,6 +115,7 @@ fun MenuScreen(navController: NavHostController) {
                 horizontalArrangement = Arrangement.Center
 
             ) {
+                val context = LocalContext.current
                 //---------- Statistics button
                 Button(
                     onClick = { navController.navigate(Screen.Stats.route) },
@@ -122,7 +131,13 @@ fun MenuScreen(navController: NavHostController) {
 
                 //---------- Play button
                 Button(
-                    onClick = { navController.navigate(Screen.Game.route) },
+                    onClick = {
+                        navController.navigate(Screen.Game.route)
+                        firebaseRef.setValue("Playing")
+                            .addOnCompleteListener {
+                                Toast.makeText(context, "Added to DB", Toast.LENGTH_SHORT).show()
+                            }
+                    },
                     modifier = Modifier
                         .padding(16.dp)
                         .weight(1f),
