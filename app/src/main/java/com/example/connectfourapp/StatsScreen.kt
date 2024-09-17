@@ -36,19 +36,14 @@ fun StatsScreen(
     val configuration = LocalConfiguration.current
     var orientation by remember { mutableStateOf(configuration.orientation) }
 
-    // Observe player stats from StatsViewModel
-    val playerStats by statsViewModel.playerStats.observeAsState(emptyList())
+    // No need to observe playerStats, it's already observable
+    val playerStats = statsViewModel.playerStats
 
     // Update orientation state when the configuration changes
     LaunchedEffect(configuration) {
         snapshotFlow { configuration.orientation }
             .collect { orientation = it }
     }
-
-    // Access game state from the ViewModel and update stats
-    val gameState = gameViewModel.state
-    statsViewModel.updateStats(gameState) // This updates the stats
-
 
     when (orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> LandscapeStatsContent(
@@ -148,7 +143,7 @@ fun PlayerStatsRowPortrait(playerStats: List<PlayerStats>) {
         // Singleplayer stats
         StatsSectionPortrait(
             title = "Singleplayer",
-            players = playerStats.filter { it.playerName == "Player 1" || it.playerName == "AI"}
+            players = playerStats.filter { it.playerName == "Player 1 (SP)" || it.playerName == "AI"}
         )
 
         Divider()
@@ -157,7 +152,7 @@ fun PlayerStatsRowPortrait(playerStats: List<PlayerStats>) {
 
         StatsSectionPortrait(
             title = "Multiplayer",
-            players = playerStats.filter { it.playerName == "Player 1 " || it.playerName == "Player 2"}
+            players = playerStats.filter { it.playerName == "Player 1 (MP)" || it.playerName == "Player 2"}
         )
     }
 }
@@ -313,28 +308,5 @@ fun PlayerStats(gamesPlayed: Int, wins: Int, draws: Int, winRate: Float, fontSiz
 fun calculateWinRate(wins: Int, gamesPlayed: Int): Float {
     return if (gamesPlayed > 0) (wins.toFloat() / gamesPlayed) * 100 else 0f
 }
-
-
-
-
-//@Preview(name = "Portrait", showBackground = true)
-//@Composable
-//fun PortraitStatsPreview() {
-//    StatsScreen(
-//        gameViewModel = MockGameViewModel(),
-//        statsViewModel = MockStatsViewModel(), // Pass MockStatsViewModel
-//        onBackClick = {}
-//    )
-//}
-//
-//@Preview(name = "Landscape", showBackground = true, widthDp = 720, heightDp = 360)
-//@Composable
-//fun LandscapeStatsPreview() {
-//    StatsScreen(
-//        gameViewModel = MockGameViewModel(),
-//        statsViewModel = MockStatsViewModel(), // Pass MockStatsViewModel
-//        onBackClick = {}
-//    )
-//}
 
 

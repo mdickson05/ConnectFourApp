@@ -64,7 +64,6 @@ class GameViewModel(
     }
     private fun storeDataInFirebase()
     {
-
         val playerOneSPWinRate = calculateWinRate(state.playerOneSPWinCount, state.spGamesPlayed)
         val playerOneMPWinRate = calculateWinRate(state.playerOneMPWinCount, state.mpGamesPlayed)
         val playerTwoWinRate = calculateWinRate(state.playerTwoWinCount, state.mpGamesPlayed)
@@ -72,9 +71,9 @@ class GameViewModel(
 
         val contactId = firebaseRef.push().key!!
 
-        val playerOneSPStats = PlayerStats(state.playerOneName, state.spGamesPlayed, state.playerOneSPWinCount, state.spDrawCount, playerOneSPWinRate, state.playerOneProfileImage)
-        val playerOneMPStats = PlayerStats(state.playerOneName, state.mpGamesPlayed, state.playerOneMPWinCount, state.mpDrawCount, playerOneMPWinRate, state.playerOneProfileImage)
-        val playerTwoStats = PlayerStats(state.playerTwoName, state.mpGamesPlayed, state.playerTwoWinCount, state.mpDrawCount, playerTwoWinRate, state.playerTwoProfileImage)
+        val playerOneSPStats = PlayerStats("Player 1 (SP)", state.spGamesPlayed, state.playerOneSPWinCount, state.spDrawCount, playerOneSPWinRate, state.playerOneProfileImage)
+        val playerOneMPStats = PlayerStats("Player 1 (MP)", state.mpGamesPlayed, state.playerOneMPWinCount, state.mpDrawCount, playerOneMPWinRate, state.playerOneProfileImage)
+        val playerTwoStats = PlayerStats("Player 2", state.mpGamesPlayed, state.playerTwoWinCount, state.mpDrawCount, playerTwoWinRate, state.playerTwoProfileImage)
         val aiStats = PlayerStats("AI", state.spGamesPlayed, state.aiWinCount, state.spDrawCount, aiWinRate, R.drawable.profile_ai)
 
         val stats = StatsHolder(contactId, playerOneSPStats, playerOneMPStats, playerTwoStats, aiStats)
