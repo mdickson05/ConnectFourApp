@@ -6,11 +6,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,37 +16,29 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.connectfourapp.ui.theme.CooperBTBold
+import java.util.Locale
 
 
 @Composable
 fun StatsScreen(
-    //settingsViewModel: SettingsViewModel,
     statsViewModel: StatsViewModel,
-    gameViewModel: GameViewModel,
     onBackClick: () -> Unit = {}
 ) {
     val configuration = LocalConfiguration.current
     var orientation by remember { mutableStateOf(configuration.orientation) }
 
-    // Observe player stats from StatsViewModel
-    val playerStats by statsViewModel.playerStats.observeAsState(emptyList())
+    // No need to observe playerStats, it's already observable
+    val playerStats = statsViewModel.playerStats
 
     // Update orientation state when the configuration changes
     LaunchedEffect(configuration) {
         snapshotFlow { configuration.orientation }
             .collect { orientation = it }
     }
-
-    // Access game state from the ViewModel and update stats
-    val gameState = gameViewModel.state
-    statsViewModel.updateStats(gameState) // This updates the stats
-
 
     when (orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> LandscapeStatsContent(
@@ -148,7 +138,7 @@ fun PlayerStatsRowPortrait(playerStats: List<PlayerStats>) {
         // Singleplayer stats
         StatsSectionPortrait(
             title = "Singleplayer",
-            players = playerStats.filter { it.playerName == "Player 1" || it.playerName == "AI"}
+            players = playerStats.filter { it.playerName == "Player 1 (SP)" || it.playerName == "AI"}
         )
 
         Divider()
@@ -157,7 +147,7 @@ fun PlayerStatsRowPortrait(playerStats: List<PlayerStats>) {
 
         StatsSectionPortrait(
             title = "Multiplayer",
-            players = playerStats.filter { it.playerName == "Player 1 " || it.playerName == "Player 2"}
+            players = playerStats.filter { it.playerName == "Player 1 (MP)" || it.playerName == "Player 2"}
         )
     }
 }
@@ -304,37 +294,15 @@ fun PlayerName(playerName: String, fontSize: TextUnit) {
 }
 @Composable
 fun PlayerStats(gamesPlayed: Int, wins: Int, draws: Int, winRate: Float, fontSize: TextUnit) {
+    val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)
     Text(text = "Games: $gamesPlayed", fontSize = fontSize)
     Text(text = "Wins: $wins", fontSize = fontSize)
     Text(text = "Draws: $draws", fontSize = fontSize)
-    Text(text = "Win Rate: ${winRate}%", fontSize = fontSize)
+    Text(text = "Win Rate: ${formattedWinRate}%", fontSize = fontSize)
 }
 
 fun calculateWinRate(wins: Int, gamesPlayed: Int): Float {
     return if (gamesPlayed > 0) (wins.toFloat() / gamesPlayed) * 100 else 0f
 }
-
-
-
-
-//@Preview(name = "Portrait", showBackground = true)
-//@Composable
-//fun PortraitStatsPreview() {
-//    StatsScreen(
-//        gameViewModel = MockGameViewModel(),
-//        statsViewModel = MockStatsViewModel(), // Pass MockStatsViewModel
-//        onBackClick = {}
-//    )
-//}
-//
-//@Preview(name = "Landscape", showBackground = true, widthDp = 720, heightDp = 360)
-//@Composable
-//fun LandscapeStatsPreview() {
-//    StatsScreen(
-//        gameViewModel = MockGameViewModel(),
-//        statsViewModel = MockStatsViewModel(), // Pass MockStatsViewModel
-//        onBackClick = {}
-//    )
-//}
 
 

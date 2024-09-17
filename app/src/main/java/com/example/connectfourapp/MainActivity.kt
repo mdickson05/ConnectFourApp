@@ -42,15 +42,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : ComponentActivity() {
-    private lateinit var firebaseRef : DatabaseReference
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         FirebaseApp.initializeApp(this)
-        firebaseRef = FirebaseDatabase.getInstance().getReference()
         enableEdgeToEdge()
         setContent {
             ConnectFourAppTheme {
@@ -64,11 +61,10 @@ class MainActivity : ComponentActivity() {
                     startDestination = Screen.Menu.route
                 ) {
                     composable(Screen.Menu.route) {
-                        MenuScreen(navController, firebaseRef)
+                        MenuScreen(navController)
                     }
                     composable(Screen.Stats.route) {
                         StatsScreen(
-                            gameViewModel = gameViewModel,
                             statsViewModel = statsViewModel,
                             onBackClick = { navController.popBackStack() }
                         )
@@ -87,7 +83,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun MenuScreen(navController: NavHostController, firebaseRef: DatabaseReference) {
+fun MenuScreen(navController: NavHostController) {
     Box( // Box to align text at button and title and buttons in middle
         modifier = Modifier
             .fillMaxSize()
@@ -133,6 +129,7 @@ fun MenuScreen(navController: NavHostController, firebaseRef: DatabaseReference)
                 Button(
                     onClick = {
                         navController.navigate(Screen.Game.route)
+                        val firebaseRef = FirebaseDatabase.getInstance().getReference("stats")
                         firebaseRef.setValue("Playing")
                             .addOnCompleteListener {
                                 Toast.makeText(context, "Added to DB", Toast.LENGTH_SHORT).show()
@@ -184,12 +181,6 @@ fun MenuScreen(navController: NavHostController, firebaseRef: DatabaseReference)
         }
     }
 }
-
-//@Preview
-//@Composable
-//fun prevMainScreen(){
-//    MenuScreen(navController = )
-//}
 
 sealed class Screen(val route: String) {
     object Menu : Screen("menu")
