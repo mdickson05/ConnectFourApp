@@ -392,7 +392,6 @@ fun PortraitContent(
             Button(
                 onClick = {
                     viewModel.onAction(GameUserAction.ResetButtonClicked)
-
                 },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)

@@ -1,11 +1,17 @@
 package com.example.connectfourapp
 
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.google.firebase.database.FirebaseDatabase
 
-class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewModel() {
+class GameViewModel(
+    private val settingsViewModel: SettingsViewModel,
+) : ViewModel() {
+
+    val firebaseRef = FirebaseDatabase.getInstance().getReference()
 
     var state by mutableStateOf(generateState())
 
@@ -42,7 +48,12 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
 
     fun updateGameState() {
 
+        // sync current state to firebase DB
+        storeDataInFirebase() // ?
+
         state = generateState()
+
+        // updateDatabase() ?
 
         // regenerate board if board size has changed
         if (state.rows * state.cols != boardItems.size) {
@@ -50,6 +61,24 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
         }
         // Reset the game state
         gameReset()
+    }
+    private fun storeDataInFirebase()
+    {
+
+        val playerOneSPWinRate = calculateWinRate(state.playerOneSPWinCount, state.spGamesPlayed)
+        val playerOneMPWinRate = calculateWinRate(state.playerOneMPWinCount, state.mpGamesPlayed)
+        val playerTwoWinRate = calculateWinRate(state.playerTwoWinCount, state.mpGamesPlayed)
+        val aiWinRate = calculateWinRate(state.aiWinCount, state.spGamesPlayed)
+
+        val contactId = firebaseRef.push().key!!
+
+        val playerOneSPStats = PlayerStats(state.playerOneName, state.spGamesPlayed, state.playerOneSPWinCount, state.spDrawCount, playerOneSPWinRate, state.playerOneProfileImage)
+        val playerOneMPStats = PlayerStats(state.playerOneName, state.mpGamesPlayed, state.playerOneMPWinCount, state.mpDrawCount, playerOneMPWinRate, state.playerOneProfileImage)
+        val playerTwoStats = PlayerStats(state.playerTwoName, state.mpGamesPlayed, state.playerTwoWinCount, state.mpDrawCount, playerTwoWinRate, state.playerTwoProfileImage)
+        val aiStats = PlayerStats("AI", state.spGamesPlayed, state.aiWinCount, state.spDrawCount, aiWinRate, R.drawable.profile_ai)
+
+        val stats = StatsHolder(contactId, playerOneSPStats, playerOneMPStats, playerTwoStats, aiStats)
+        firebaseRef.child(contactId).setValue(stats)
     }
 
     fun onAction(action: GameUserAction)
@@ -367,5 +396,9 @@ class GameViewModel(private val settingsViewModel: SettingsViewModel) : ViewMode
 
         // If move is not in the bottom row, check if the position below is filled
         return boardItems[move + state.cols] != PlayerType.NONE
+    }
+
+    private fun calculateWinRate(wins: Int, gamesPlayed: Int): Float {
+        return if (gamesPlayed > 0) (wins.toFloat() / gamesPlayed) * 100 else 0f
     }
 }
