@@ -5,5 +5,5 @@ data class StatsHolder(
     val playerOneSP : PlayerStats = PlayerStats(),
     val playerOneMP : PlayerStats = PlayerStats(),
     val playerTwo : PlayerStats = PlayerStats(),
-    val ai : PlayerStats = PlayerStats ()
+    val ai : PlayerStats = PlayerStats()
 )

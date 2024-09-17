@@ -10,7 +10,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 class StatsViewModel : ViewModel() {
-    private val firebaseRef = FirebaseDatabase.getInstance().getReference()
+    private val firebaseRef = FirebaseDatabase.getInstance().getReference("stats")
     var playerStats by mutableStateOf<List<PlayerStats>>(emptyList())
         // Use mutableStateOf to create observable state
         private set // used in updateStats()

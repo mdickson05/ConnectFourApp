@@ -131,7 +131,7 @@ fun MenuScreen(navController: NavHostController) {
                 Button(
                     onClick = {
                         navController.navigate(Screen.Game.route)
-                        val firebaseRef = FirebaseDatabase.getInstance().getReference()
+                        val firebaseRef = FirebaseDatabase.getInstance().getReference("stats")
                         firebaseRef.setValue("Playing")
                             .addOnCompleteListener {
                                 Toast.makeText(context, "Added to DB", Toast.LENGTH_SHORT).show()
