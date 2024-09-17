@@ -42,7 +42,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : ComponentActivity() {
@@ -66,7 +65,6 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(Screen.Stats.route) {
                         StatsScreen(
-                            gameViewModel = gameViewModel,
                             statsViewModel = statsViewModel,
                             onBackClick = { navController.popBackStack() }
                         )
@@ -183,12 +181,6 @@ fun MenuScreen(navController: NavHostController) {
         }
     }
 }
-
-//@Preview
-//@Composable
-//fun prevMainScreen(){
-//    MenuScreen(navController = )
-//}
 
 sealed class Screen(val route: String) {
     object Menu : Screen("menu")
