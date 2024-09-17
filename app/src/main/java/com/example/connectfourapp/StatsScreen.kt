@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.connectfourapp.ui.theme.CooperBTBold
+import java.util.Locale
 
 
 @Composable
@@ -299,10 +300,11 @@ fun PlayerName(playerName: String, fontSize: TextUnit) {
 }
 @Composable
 fun PlayerStats(gamesPlayed: Int, wins: Int, draws: Int, winRate: Float, fontSize: TextUnit) {
+    val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)
     Text(text = "Games: $gamesPlayed", fontSize = fontSize)
     Text(text = "Wins: $wins", fontSize = fontSize)
     Text(text = "Draws: $draws", fontSize = fontSize)
-    Text(text = "Win Rate: ${winRate}%", fontSize = fontSize)
+    Text(text = "Win Rate: ${formattedWinRate}%", fontSize = fontSize)
 }
 
 fun calculateWinRate(wins: Int, gamesPlayed: Int): Float {
