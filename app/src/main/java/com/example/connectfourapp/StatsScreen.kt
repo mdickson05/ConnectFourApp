@@ -1,6 +1,7 @@
 package com.example.connectfourapp
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +32,16 @@ fun StatsScreen(
 ) {
     val configuration = LocalConfiguration.current
     var orientation by remember { mutableStateOf(configuration.orientation) }
+
+    // Observe toast message from statsViewModel
+    val toastMessage = statsViewModel.toastMessage
+
+    // Show toast if there's a message
+    toastMessage?.let {
+        Toast.makeText(LocalContext.current, it, Toast.LENGTH_SHORT).show()
+        // Reset the toast message to avoid repeated toasts
+        statsViewModel.clearToastMessage()
+    }
 
     // No need to observe playerStats, it's already observable
     val playerStats = statsViewModel.playerStats

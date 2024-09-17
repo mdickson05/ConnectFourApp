@@ -1,6 +1,8 @@
 package com.example.connectfourapp
 
+import android.content.Context
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
@@ -36,6 +38,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -44,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,11 +64,21 @@ import java.util.Locale
 fun GameScreen(
     viewModel: GameViewModel,
     navController: NavHostController
-){
+) {
     // GOT THE CODE FOR CHANGING CODE BASED ON ORIENTATION FROM STACK OVERFLOW:
     // https://stackoverflow.com/a/67612872/21301692
     var orientation by remember { mutableIntStateOf(Configuration.ORIENTATION_PORTRAIT) }
     val configuration = LocalConfiguration.current
+
+    // Observe toast message from ViewModel
+    val toastMessage = viewModel.toastMessage
+
+    // Show toast if there's a message
+    toastMessage?.let {
+        Toast.makeText(LocalContext.current, it, Toast.LENGTH_SHORT).show()
+        // Reset the toast message to avoid repeated toasts
+        viewModel.clearToastMessage()
+    }
 
     // If our configuration changes then this will launch a new coroutine scope for it
     LaunchedEffect(configuration) {
@@ -77,6 +91,7 @@ fun GameScreen(
         Configuration.ORIENTATION_LANDSCAPE -> {
             LandscapeContent(viewModel, navController)
         }
+
         else -> {
             PortraitContent(viewModel, navController)
         }
@@ -651,7 +666,11 @@ fun LandscapeContent(
                                             indication = null
                                         ) {
                                             if (state.currentTurn == PlayerType.ONE || state.currentTurn == PlayerType.TWO) {
-                                                viewModel.onAction(GameUserAction.BoardTapped(cellNum))
+                                                viewModel.onAction(
+                                                    GameUserAction.BoardTapped(
+                                                        cellNum
+                                                    )
+                                                )
                                             }
                                         },
                                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -782,6 +801,9 @@ fun LandscapeContent(
     }
 }
 
+fun Context.showToast(message: String) {
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+}
 
 @Preview
 @Composable
