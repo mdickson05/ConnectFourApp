@@ -4,17 +4,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
 class GameViewModel(
     private val settingsViewModel: SettingsViewModel,
 ) : ViewModel() {
 
-    val firebaseRef = FirebaseDatabase.getInstance().getReference("stats")
+    private val playerOneSPRef = FirebaseDatabase.getInstance().getReference("Player 1 (SP)")
+    private val playerOneMPRef = FirebaseDatabase.getInstance().getReference("Player 1 (MP)")
+    private val playerTwoRef = FirebaseDatabase.getInstance().getReference("Player 2")
+    private val aiRef = FirebaseDatabase.getInstance().getReference("AI")
 
     var state by mutableStateOf(generateState())
-
     var boardItems by mutableStateOf(generateBoardItems())
+
+    private var _toastMessage by mutableStateOf<String?>(null)
+    val toastMessage: String? get() = _toastMessage
 
     private fun generateBoardItems(): Map<Int, PlayerType> {
         return (1..(state.rows * state.cols)).associateWith { PlayerType.NONE }
@@ -26,7 +32,6 @@ class GameViewModel(
         var state by mutableStateOf(GameState())
 
         // Update GameState based on settingsViewModel
-
         state = state.copy(
 
             boardSize = settingsViewModel.selectedBoardOption,
@@ -46,37 +51,228 @@ class GameViewModel(
     }
 
     fun updateGameState() {
+        // update database values OR generate new database
+        updateDatabase {
+            // Generate a new game state
+            state = generateState()
 
-        // sync current state to firebase DB
-        storeDataInFirebase() // ?
+            // Regenerate board if board size has changed
+            if (state.rows * state.cols != boardItems.size) {
+                boardItems = generateBoardItems()
+            }
 
-        state = generateState()
-
-        // updateDatabase() ?
-
-        // regenerate board if board size has changed
-        if (state.rows * state.cols != boardItems.size) {
-            boardItems = generateBoardItems()
+            // Reset the game state
+            gameReset()
         }
-        // Reset the game state
-        gameReset()
     }
-    private fun storeDataInFirebase()
+
+    fun updateDatabase(onComplete: (Boolean) -> Unit) {
+        databaseExists(playerOneSPRef, playerOneMPRef, playerTwoRef, aiRef) { allExist ->
+            if (allExist) {
+                // If all references exist, update entries
+                if (state.gameMode == SharedEnums.GameMode.SINGLE) {
+                    updateSPEntries(onComplete)
+                } else {
+                    updateMPEntries(onComplete)
+                }
+            } else {
+                // If any of the references don't exist, create a new database
+                createDatabase(onComplete)
+            }
+        }
+    }
+
+    private fun databaseExists(vararg refs : DatabaseReference, onComplete: (Boolean) -> Unit)
     {
+        var allExist = true
+        var completedChecks = 0
+
+        for (ref in refs) {
+            ref.get().addOnSuccessListener { dataSnapshot ->
+                if (!dataSnapshot.exists()) {
+                    allExist = false
+                }
+                completedChecks++
+                if (completedChecks == refs.size) {
+                    // Once all checks are done, invoke the callback
+                    onComplete(allExist)
+                }
+            }.addOnFailureListener {
+                // Handle errors in reading data, possibly a network issue
+                _toastMessage = "Error with checking if database exists!"
+                allExist = false
+                completedChecks++
+                if (completedChecks == refs.size) {
+                    onComplete(allExist)
+                }
+            }
+        }
+    }
+
+    private fun updateSPEntries(onComplete: (Boolean) -> Unit)
+    {
+        // get new stats
+        val playerOneWinRate = calculateWinRate(state.playerOneSPWinCount, state.spGamesPlayed)
+        val aiWinRate = calculateWinRate(state.aiWinCount, state.spGamesPlayed)
+        val newPlayerOneStats = PlayerStats("Player 1 (SP)", state.spGamesPlayed, state.playerOneSPWinCount, state.spDrawCount, playerOneWinRate, state.playerOneProfileImage)
+        val newAiStats = PlayerStats("AI", state.spGamesPlayed, state.aiWinCount, state.spDrawCount, aiWinRate, R.drawable.profile_ai)
+
+        playerOneSPRef.get().addOnSuccessListener { playerOneSnapshot ->
+            aiRef.get().addOnSuccessListener { aiSnapshot ->
+
+                // Retrieve existing stats
+                val currentPlayerOneStats = playerOneSnapshot.getValue(PlayerStats::class.java)
+                val currentAiStats = aiSnapshot.getValue(PlayerStats::class.java)
+
+                // Combine existing stats with new stats
+                val updatedPlayerOneStats = generateNewStat(currentPlayerOneStats, newPlayerOneStats)
+                val updatedAiStats = generateNewStat(currentAiStats, newAiStats)
+
+                // Update Firebase with the new combined stats
+                playerOneSPRef.setValue(updatedPlayerOneStats)
+                aiRef.setValue(updatedAiStats)
+
+                _toastMessage = "Single-player entries updated"
+
+                onComplete(true)
+            }
+        }
+    }
+
+    private fun updateMPEntries(onComplete: (Boolean) -> Unit)
+    {
+        val playerOneWinRate = calculateWinRate(state.playerOneMPWinCount, state.mpGamesPlayed)
+        val playerTwoWinRate = calculateWinRate(state.playerTwoWinCount, state.mpGamesPlayed)
+        val newPlayerOneStats = PlayerStats("Player 1 (MP)", state.mpGamesPlayed, state.playerOneMPWinCount, state.mpDrawCount, playerOneWinRate, state.playerOneProfileImage)
+        val newPlayerTwoStats = PlayerStats("Player 2", state.mpGamesPlayed, state.playerTwoWinCount, state.mpDrawCount, playerTwoWinRate, state.playerTwoProfileImage)
+
+
+        playerOneMPRef.get().addOnSuccessListener { playerOneSnapshot ->
+            playerTwoRef.get().addOnSuccessListener { playerTwoSnapshot ->
+
+                // Retrieve existing stats
+                val currentPlayerOneStats = playerOneSnapshot.getValue(PlayerStats::class.java)
+                val currentPlayerTwoStats = playerTwoSnapshot.getValue(PlayerStats::class.java)
+
+                // Combine existing stats with new stats
+                val updatedPlayerOneStats = generateNewStat(currentPlayerOneStats, newPlayerOneStats)
+                val updatedPlayerTwoStats = generateNewStat(currentPlayerTwoStats, newPlayerTwoStats)
+
+                // Update Firebase with the new combined stats
+                playerOneMPRef.setValue(updatedPlayerOneStats)
+                playerTwoRef.setValue(updatedPlayerTwoStats)
+
+                onComplete(true)
+
+                _toastMessage = "Multi-player entries updated"
+            }
+        }
+    }
+
+    fun createDatabase(onComplete: (Boolean) -> Unit) {
         val playerOneSPWinRate = calculateWinRate(state.playerOneSPWinCount, state.spGamesPlayed)
         val playerOneMPWinRate = calculateWinRate(state.playerOneMPWinCount, state.mpGamesPlayed)
         val playerTwoWinRate = calculateWinRate(state.playerTwoWinCount, state.mpGamesPlayed)
         val aiWinRate = calculateWinRate(state.aiWinCount, state.spGamesPlayed)
 
-        val statsDatabaseId = firebaseRef.push().key!!
+        // default stats - will just grab from current session
+        val playerOneSPStats = PlayerStats(
+            "Player 1 (SP)",
+            state.spGamesPlayed,
+            state.playerOneSPWinCount,
+            state.spDrawCount,
+            playerOneSPWinRate,
+            state.playerOneProfileImage
+        )
+        val playerOneMPStats = PlayerStats(
+            "Player 1 (MP)",
+            state.mpGamesPlayed,
+            state.playerOneMPWinCount,
+            state.mpDrawCount,
+            playerOneMPWinRate,
+            state.playerOneProfileImage
+        )
+        val playerTwoStats = PlayerStats(
+            "Player 2",
+            state.mpGamesPlayed,
+            state.playerTwoWinCount,
+            state.mpDrawCount,
+            playerTwoWinRate,
+            state.playerTwoProfileImage
+        )
+        val aiStats = PlayerStats(
+            "AI",
+            state.spGamesPlayed,
+            state.aiWinCount,
+            state.spDrawCount,
+            aiWinRate,
+            R.drawable.profile_ai
+        )
 
-        val playerOneSPStats = PlayerStats("Player 1 (SP)", state.spGamesPlayed, state.playerOneSPWinCount, state.spDrawCount, playerOneSPWinRate, state.playerOneProfileImage)
-        val playerOneMPStats = PlayerStats("Player 1 (MP)", state.mpGamesPlayed, state.playerOneMPWinCount, state.mpDrawCount, playerOneMPWinRate, state.playerOneProfileImage)
-        val playerTwoStats = PlayerStats("Player 2", state.mpGamesPlayed, state.playerTwoWinCount, state.mpDrawCount, playerTwoWinRate, state.playerTwoProfileImage)
-        val aiStats = PlayerStats("AI", state.spGamesPlayed, state.aiWinCount, state.spDrawCount, aiWinRate, R.drawable.profile_ai)
+        var completeCount = 0
+        playerOneSPRef.setValue(playerOneSPStats)
+            .addOnCompleteListener {
+                completeCount++
+            }
+            .addOnFailureListener {
+                _toastMessage = "Failed to store Player 1 (SP) data"
+                onComplete(false)
+            }
+        playerOneMPRef.setValue(playerOneMPStats)
+            .addOnCompleteListener {
+                completeCount++
+            }
+            .addOnFailureListener {
+                _toastMessage = "Failed to store Player 1 (MP) data"
+                onComplete(false)
+            }
+        playerTwoRef.setValue(playerTwoStats)
+            .addOnCompleteListener {
+                completeCount++
+            }
+            .addOnFailureListener {
+                _toastMessage = "Failed to store Player 2 data"
+                onComplete(false)
+            }
+        aiRef.setValue(aiStats)
+            .addOnCompleteListener {
+                completeCount++
+            }
+            .addOnFailureListener {
+                _toastMessage = "Failed to store AI data"
+            }
+        if(completeCount == 4)
+        {
+            _toastMessage = "Database created successfully"
+            onComplete(true)
+        }
+    }
 
-        val stats = StatsHolder(statsDatabaseId, playerOneSPStats, playerOneMPStats, playerTwoStats, aiStats)
-        firebaseRef.child(statsDatabaseId).setValue(stats)
+    private fun generateNewStat(
+        old : PlayerStats?,
+        new : PlayerStats
+    ) : PlayerStats
+    {
+        return if (old != null) {
+            PlayerStats(
+                playerName = new.playerName,
+                gamesPlayed = old.gamesPlayed + new.gamesPlayed,
+                wins = old.wins + new.wins,
+                draws = old.draws + new.draws,
+                winRate = calculateWinRate(
+                    old.wins + new.wins,
+                    old.gamesPlayed + new.gamesPlayed
+                ),
+                profile = new.profile
+            )
+        } else {
+            new // If no existing stats, just use the new stats
+                // shouldn't ever be called?
+        }
+    }
+
+    fun clearToastMessage() {
+        _toastMessage = null
     }
 
     fun onAction(action: GameUserAction)

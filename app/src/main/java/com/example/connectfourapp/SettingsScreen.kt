@@ -122,7 +122,7 @@ fun PortraitContent(
             horizontalArrangement = Arrangement.Start, // Align items to the start of the Row
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Go back to menu button
+            // Go back to game/menu button
             Button(
                 onClick = {
                     viewModel.onBackButtonClicked { gameViewModel.updateGameState() }

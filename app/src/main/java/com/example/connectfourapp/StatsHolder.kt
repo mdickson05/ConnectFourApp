@@ -2,8 +2,8 @@ package com.example.connectfourapp
 
 data class StatsHolder(
     val id : String = "",
-    val playerOneSP : PlayerStats = PlayerStats(),
-    val playerOneMP : PlayerStats = PlayerStats(),
-    val playerTwo : PlayerStats = PlayerStats(),
-    val ai : PlayerStats = PlayerStats()
+    var playerOneSP : PlayerStats = PlayerStats(),
+    var playerOneMP : PlayerStats = PlayerStats(),
+    var playerTwo : PlayerStats = PlayerStats(),
+    var ai : PlayerStats = PlayerStats()
 )

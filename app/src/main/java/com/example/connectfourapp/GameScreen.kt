@@ -1,6 +1,8 @@
 package com.example.connectfourapp
 
+import android.content.Context
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
@@ -44,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,11 +63,21 @@ import java.util.Locale
 fun GameScreen(
     viewModel: GameViewModel,
     navController: NavHostController
-){
+) {
     // GOT THE CODE FOR CHANGING CODE BASED ON ORIENTATION FROM STACK OVERFLOW:
     // https://stackoverflow.com/a/67612872/21301692
     var orientation by remember { mutableIntStateOf(Configuration.ORIENTATION_PORTRAIT) }
     val configuration = LocalConfiguration.current
+
+    // Observe toast message from ViewModel
+    val toastMessage = viewModel.toastMessage
+
+    // Show toast if there's a message
+    toastMessage?.let {
+        Toast.makeText(LocalContext.current, it, Toast.LENGTH_SHORT).show()
+        // Reset the toast message to avoid repeated toasts
+        viewModel.clearToastMessage()
+    }
 
     // If our configuration changes then this will launch a new coroutine scope for it
     LaunchedEffect(configuration) {
@@ -77,6 +90,7 @@ fun GameScreen(
         Configuration.ORIENTATION_LANDSCAPE -> {
             LandscapeContent(viewModel, navController)
         }
+
         else -> {
             PortraitContent(viewModel, navController)
         }
@@ -197,35 +211,33 @@ fun PortraitContent(
                 Column (
                     horizontalAlignment = Alignment.End
                 ) {
-                    Text(text = state.playerTwoName, fontSize = 20.sp)
-                    if(state.spGamesPlayed != 0 || state.mpGamesPlayed != 0)
+                    if(state.gameMode == SharedEnums.GameMode.MULTI)
                     {
-                        if(state.gameMode == SharedEnums.GameMode.MULTI)
+                        Text(text = state.playerTwoName, fontSize = 20.sp)
+                        if(state.spGamesPlayed != 0 || state.mpGamesPlayed != 0)
                         {
-                            // no need to do separate single-player check for p2
                             val winRate: Double = (state.playerTwoWinCount.toDouble() / state.mpGamesPlayed.toDouble()) * 100
                             val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
                             Text(text = "Wins: " + state.playerTwoWinCount)
                             Text(text = "Draws: " + state.mpDrawCount)
                             Text(text = "Losses: " + (state.mpGamesPlayed - state.playerTwoWinCount - state.mpDrawCount))
-                            if(state.mpGamesPlayed != 0)
-                            {
-                                Text(text = "Win Rate: $formattedWinRate%")
-                            }
+                            Text(text = "Win Rate: $formattedWinRate%")
                         }
-                        else
+                    }
+                    else
+                    {
+                        Text(text = "AI", fontSize = 20.sp)
+                        if(state.spGamesPlayed != 0 || state.mpGamesPlayed != 0)
                         {
                             val winRate: Double = (state.aiWinCount.toDouble() / state.spGamesPlayed.toDouble()) * 100
-                            val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
-                            Text(text = "AI", fontSize = 20.sp)
+                            val formattedWinRate = String.format(Locale.ENGLISH,"%.1f", winRate)  // Rounds to 1 decimal place
+
                             Text(text = "Wins: " + state.aiWinCount)
                             Text(text = "Draws: " + state.spDrawCount)
                             Text(text = "Losses: " + (state.spGamesPlayed - state.aiWinCount - state.spDrawCount))
-                            if(state.spGamesPlayed != 0)
-                            {
-                                Text(text = "Win Rate: $formattedWinRate%")
-                            }
+                            Text(text = "Win Rate: $formattedWinRate%")
                         }
+
                     }
 
                 }
@@ -336,7 +348,11 @@ fun PortraitContent(
         ){
             // Back to menu
             Button(
-                onClick = { navController.navigate(Screen.Menu.route) },
+                onClick = {
+                    viewModel.updateDatabase{
+                        navController.navigate(Screen.Menu.route)
+                    }
+                },
                 modifier = Modifier.size(48.dp),
                 shape = CircleShape,
                 contentPadding = PaddingValues(1.dp)
@@ -562,38 +578,34 @@ fun LandscapeContent(
                 Column (
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = state.playerTwoName, fontSize = 20.sp)
-                    if(state.spGamesPlayed != 0 || state.mpGamesPlayed != 0)
+                    if(state.gameMode == SharedEnums.GameMode.MULTI)
                     {
-                        if(state.gameMode == SharedEnums.GameMode.MULTI)
+                        Text(text = state.playerTwoName, fontSize = 20.sp)
+                        if(state.spGamesPlayed != 0 || state.mpGamesPlayed != 0)
                         {
                             val winRate: Double = (state.playerTwoWinCount.toDouble() / state.mpGamesPlayed.toDouble()) * 100
                             val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
-
                             Text(text = "Wins: " + state.playerTwoWinCount)
                             Text(text = "Draws: " + state.mpDrawCount)
                             Text(text = "Losses: " + (state.mpGamesPlayed - state.playerTwoWinCount - state.mpDrawCount))
-                            if(state.mpGamesPlayed != 0)
-                            {
-                                Text(text = "Win Rate: $formattedWinRate%")
-                            }
+                            Text(text = "Win Rate: $formattedWinRate%")
                         }
-                        else
+                    }
+                    else
+                    {
+                        Text(text = "AI", fontSize = 20.sp)
+                        if(state.spGamesPlayed != 0 || state.mpGamesPlayed != 0)
                         {
                             val winRate: Double = (state.aiWinCount.toDouble() / state.spGamesPlayed.toDouble()) * 100
                             val formattedWinRate = String.format(Locale.ENGLISH,"%.1f", winRate)  // Rounds to 1 decimal place
-                            Text(text = "AI", fontSize = 20.sp)
+
                             Text(text = "Wins: " + state.aiWinCount)
                             Text(text = "Draws: " + state.spDrawCount)
                             Text(text = "Losses: " + (state.spGamesPlayed - state.aiWinCount - state.spDrawCount))
-
-                            if(state.spGamesPlayed != 0)
-                            {
-                                Text(text = "Win Rate: $formattedWinRate%")
-                            }
+                            Text(text = "Win Rate: $formattedWinRate%")
                         }
-                    }
 
+                    }
                 }
             }
 
@@ -651,7 +663,11 @@ fun LandscapeContent(
                                             indication = null
                                         ) {
                                             if (state.currentTurn == PlayerType.ONE || state.currentTurn == PlayerType.TWO) {
-                                                viewModel.onAction(GameUserAction.BoardTapped(cellNum))
+                                                viewModel.onAction(
+                                                    GameUserAction.BoardTapped(
+                                                        cellNum
+                                                    )
+                                                )
                                             }
                                         },
                                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -781,7 +797,6 @@ fun LandscapeContent(
         }
     }
 }
-
 
 @Preview
 @Composable

@@ -1,7 +1,6 @@
 package com.example.connectfourapp
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -42,7 +41,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
-import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +52,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val settingsViewModel: SettingsViewModel = viewModel()
                 val gameViewModel: GameViewModel = viewModel { GameViewModel(settingsViewModel) }
-                val statsViewModel: StatsViewModel = viewModel()
+                val statsViewModel: StatsViewModel = viewModel { StatsViewModel(gameViewModel) }
 
                 NavHost(
                     navController = navController,
@@ -111,10 +109,10 @@ fun MenuScreen(navController: NavHostController) {
                 horizontalArrangement = Arrangement.Center
 
             ) {
-                val context = LocalContext.current
                 //---------- Statistics button
                 Button(
                     onClick = { navController.navigate(Screen.Stats.route) },
+
                     modifier = Modifier
                         .padding(16.dp),
                     colors = ButtonDefaults.buttonColors(Color.DarkGray)
@@ -129,11 +127,6 @@ fun MenuScreen(navController: NavHostController) {
                 Button(
                     onClick = {
                         navController.navigate(Screen.Game.route)
-                        val firebaseRef = FirebaseDatabase.getInstance().getReference("stats")
-                        firebaseRef.setValue("Playing")
-                            .addOnCompleteListener {
-                                Toast.makeText(context, "Added to DB", Toast.LENGTH_SHORT).show()
-                            }
                     },
                     modifier = Modifier
                         .padding(16.dp)

@@ -1,6 +1,7 @@
 package com.example.connectfourapp
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,8 +30,23 @@ fun StatsScreen(
     statsViewModel: StatsViewModel,
     onBackClick: () -> Unit = {}
 ) {
+
+    LaunchedEffect(Unit) {
+        statsViewModel.getStatsScreen()
+    }
+
     val configuration = LocalConfiguration.current
-    var orientation by remember { mutableStateOf(configuration.orientation) }
+    var orientation by remember { mutableIntStateOf(configuration.orientation) }
+
+    // Observe toast message from statsViewModel
+    val toastMessage = statsViewModel.toastMessage
+
+    // Show toast if there's a message
+    toastMessage?.let {
+        Toast.makeText(LocalContext.current, it, Toast.LENGTH_SHORT).show()
+        // Reset the toast message to avoid repeated toasts
+        statsViewModel.clearToastMessage()
+    }
 
     // No need to observe playerStats, it's already observable
     val playerStats = statsViewModel.playerStats
@@ -135,18 +152,18 @@ fun PlayerStatsRowPortrait(playerStats: List<PlayerStats>) {
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(46.dp)
     ) {
-        // Singleplayer stats
+        // Single-player stats
         StatsSectionPortrait(
-            title = "Singleplayer",
+            title = "Single-player",
             players = playerStats.filter { it.playerName == "Player 1 (SP)" || it.playerName == "AI"}
         )
 
         Divider()
 
-        // Multiplayer stats
+        // Multi-player stats
 
         StatsSectionPortrait(
-            title = "Multiplayer",
+            title = "Multi-player",
             players = playerStats.filter { it.playerName == "Player 1 (MP)" || it.playerName == "Player 2"}
         )
     }
@@ -159,7 +176,7 @@ fun PlayerStatsRowLandscape(playerStats: List<PlayerStats>) {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         StatsSectionLandscape(
-            title = "Singleplayer",
+            title = "Single-player",
             players = playerStats.filter { it.playerName == "Player 1" || it.playerName == "AI"},
             modifier = Modifier.weight(1f)
         )
