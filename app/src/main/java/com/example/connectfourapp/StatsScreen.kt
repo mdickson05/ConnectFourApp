@@ -30,8 +30,13 @@ fun StatsScreen(
     statsViewModel: StatsViewModel,
     onBackClick: () -> Unit = {}
 ) {
+
+    LaunchedEffect(Unit) {
+        statsViewModel.getStatsScreen()
+    }
+
     val configuration = LocalConfiguration.current
-    var orientation by remember { mutableStateOf(configuration.orientation) }
+    var orientation by remember { mutableIntStateOf(configuration.orientation) }
 
     // Observe toast message from statsViewModel
     val toastMessage = statsViewModel.toastMessage
@@ -147,18 +152,18 @@ fun PlayerStatsRowPortrait(playerStats: List<PlayerStats>) {
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(46.dp)
     ) {
-        // Singleplayer stats
+        // Single-player stats
         StatsSectionPortrait(
-            title = "Singleplayer",
+            title = "Single-player",
             players = playerStats.filter { it.playerName == "Player 1 (SP)" || it.playerName == "AI"}
         )
 
         Divider()
 
-        // Multiplayer stats
+        // Multi-player stats
 
         StatsSectionPortrait(
-            title = "Multiplayer",
+            title = "Multi-player",
             players = playerStats.filter { it.playerName == "Player 1 (MP)" || it.playerName == "Player 2"}
         )
     }
@@ -171,7 +176,7 @@ fun PlayerStatsRowLandscape(playerStats: List<PlayerStats>) {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         StatsSectionLandscape(
-            title = "Singleplayer",
+            title = "Single-player",
             players = playerStats.filter { it.playerName == "Player 1" || it.playerName == "AI"},
             modifier = Modifier.weight(1f)
         )
