@@ -209,7 +209,7 @@ class GameViewModel(
             R.drawable.profile_ai
         )
 
-        var completeCount: Int = 0
+        var completeCount = 0
         playerOneSPRef.setValue(playerOneSPStats)
             .addOnCompleteListener {
                 completeCount++

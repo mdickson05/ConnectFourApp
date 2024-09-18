@@ -109,7 +109,6 @@ fun MenuScreen(navController: NavHostController) {
                 horizontalArrangement = Arrangement.Center
 
             ) {
-                val context = LocalContext.current
                 //---------- Statistics button
                 Button(
                     onClick = { navController.navigate(Screen.Stats.route) },
