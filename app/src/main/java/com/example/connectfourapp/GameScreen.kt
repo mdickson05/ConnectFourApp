@@ -212,35 +212,33 @@ fun PortraitContent(
                 Column (
                     horizontalAlignment = Alignment.End
                 ) {
-                    Text(text = state.playerTwoName, fontSize = 20.sp)
-                    if(state.spGamesPlayed != 0 || state.mpGamesPlayed != 0)
+                    if(state.gameMode == SharedEnums.GameMode.MULTI)
                     {
-                        if(state.gameMode == SharedEnums.GameMode.MULTI)
+                        Text(text = state.playerTwoName, fontSize = 20.sp)
+                        if(state.spGamesPlayed != 0 || state.mpGamesPlayed != 0)
                         {
-                            // no need to do separate single-player check for p2
                             val winRate: Double = (state.playerTwoWinCount.toDouble() / state.mpGamesPlayed.toDouble()) * 100
                             val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
                             Text(text = "Wins: " + state.playerTwoWinCount)
                             Text(text = "Draws: " + state.mpDrawCount)
                             Text(text = "Losses: " + (state.mpGamesPlayed - state.playerTwoWinCount - state.mpDrawCount))
-                            if(state.mpGamesPlayed != 0)
-                            {
-                                Text(text = "Win Rate: $formattedWinRate%")
-                            }
+                            Text(text = "Win Rate: $formattedWinRate%")
                         }
-                        else
+                    }
+                    else
+                    {
+                        Text(text = "AI", fontSize = 20.sp)
+                        if(state.spGamesPlayed != 0 || state.mpGamesPlayed != 0)
                         {
                             val winRate: Double = (state.aiWinCount.toDouble() / state.spGamesPlayed.toDouble()) * 100
-                            val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
-                            Text(text = "AI", fontSize = 20.sp)
+                            val formattedWinRate = String.format(Locale.ENGLISH,"%.1f", winRate)  // Rounds to 1 decimal place
+
                             Text(text = "Wins: " + state.aiWinCount)
                             Text(text = "Draws: " + state.spDrawCount)
                             Text(text = "Losses: " + (state.spGamesPlayed - state.aiWinCount - state.spDrawCount))
-                            if(state.spGamesPlayed != 0)
-                            {
-                                Text(text = "Win Rate: $formattedWinRate%")
-                            }
+                            Text(text = "Win Rate: $formattedWinRate%")
                         }
+
                     }
 
                 }
@@ -351,7 +349,11 @@ fun PortraitContent(
         ){
             // Back to menu
             Button(
-                onClick = { navController.navigate(Screen.Menu.route) },
+                onClick = {
+                    viewModel.updateDatabase{
+                        navController.navigate(Screen.Menu.route)
+                    }
+                },
                 modifier = Modifier.size(48.dp),
                 shape = CircleShape,
                 contentPadding = PaddingValues(1.dp)
@@ -577,38 +579,34 @@ fun LandscapeContent(
                 Column (
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = state.playerTwoName, fontSize = 20.sp)
-                    if(state.spGamesPlayed != 0 || state.mpGamesPlayed != 0)
+                    if(state.gameMode == SharedEnums.GameMode.MULTI)
                     {
-                        if(state.gameMode == SharedEnums.GameMode.MULTI)
+                        Text(text = state.playerTwoName, fontSize = 20.sp)
+                        if(state.spGamesPlayed != 0 || state.mpGamesPlayed != 0)
                         {
                             val winRate: Double = (state.playerTwoWinCount.toDouble() / state.mpGamesPlayed.toDouble()) * 100
                             val formattedWinRate = String.format(Locale.ENGLISH, "%.1f", winRate)  // Rounds to 1 decimal place
-
                             Text(text = "Wins: " + state.playerTwoWinCount)
                             Text(text = "Draws: " + state.mpDrawCount)
                             Text(text = "Losses: " + (state.mpGamesPlayed - state.playerTwoWinCount - state.mpDrawCount))
-                            if(state.mpGamesPlayed != 0)
-                            {
-                                Text(text = "Win Rate: $formattedWinRate%")
-                            }
+                            Text(text = "Win Rate: $formattedWinRate%")
                         }
-                        else
+                    }
+                    else
+                    {
+                        Text(text = "AI", fontSize = 20.sp)
+                        if(state.spGamesPlayed != 0 || state.mpGamesPlayed != 0)
                         {
                             val winRate: Double = (state.aiWinCount.toDouble() / state.spGamesPlayed.toDouble()) * 100
                             val formattedWinRate = String.format(Locale.ENGLISH,"%.1f", winRate)  // Rounds to 1 decimal place
-                            Text(text = "AI", fontSize = 20.sp)
+
                             Text(text = "Wins: " + state.aiWinCount)
                             Text(text = "Draws: " + state.spDrawCount)
                             Text(text = "Losses: " + (state.spGamesPlayed - state.aiWinCount - state.spDrawCount))
-
-                            if(state.spGamesPlayed != 0)
-                            {
-                                Text(text = "Win Rate: $formattedWinRate%")
-                            }
+                            Text(text = "Win Rate: $formattedWinRate%")
                         }
-                    }
 
+                    }
                 }
             }
 
