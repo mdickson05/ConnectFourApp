@@ -52,23 +52,21 @@ class GameViewModel(
 
     fun updateGameState() {
         // update database values OR generate new database
-        updateDatabase { success ->
-            if (success) {
-                // Generate a new game state
-                state = generateState()
+        updateDatabase {
+            // Generate a new game state
+            state = generateState()
 
-                // Regenerate board if board size has changed
-                if (state.rows * state.cols != boardItems.size) {
-                    boardItems = generateBoardItems()
-                }
-
-                // Reset the game state
-                gameReset()
+            // Regenerate board if board size has changed
+            if (state.rows * state.cols != boardItems.size) {
+                boardItems = generateBoardItems()
             }
+
+            // Reset the game state
+            gameReset()
         }
     }
 
-    private fun updateDatabase(onComplete: (Boolean) -> Unit) {
+    fun updateDatabase(onComplete: (Boolean) -> Unit) {
         databaseExists(playerOneSPRef, playerOneMPRef, playerTwoRef, aiRef) { allExist ->
             if (allExist) {
                 // If all references exist, update entries
@@ -143,8 +141,6 @@ class GameViewModel(
 
     private fun updateMPEntries(onComplete: (Boolean) -> Unit)
     {
-        _toastMessage = "games played: ${state.mpGamesPlayed}"
-
         val playerOneWinRate = calculateWinRate(state.playerOneMPWinCount, state.mpGamesPlayed)
         val playerTwoWinRate = calculateWinRate(state.playerTwoWinCount, state.mpGamesPlayed)
         val newPlayerOneStats = PlayerStats("Player 1 (MP)", state.mpGamesPlayed, state.playerOneMPWinCount, state.mpDrawCount, playerOneWinRate, state.playerOneProfileImage)
@@ -168,7 +164,7 @@ class GameViewModel(
 
                 onComplete(true)
 
-                // _toastMessage = "Multi-player entries updated"
+                _toastMessage = "Multi-player entries updated"
             }
         }
     }
