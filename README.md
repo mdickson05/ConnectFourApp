@@ -1,9 +1,7 @@
-# Mobile Application Development Assignment 1
-## Part A
-#### Jet Le (21546679), Marcus Dickson (21549225), Charles Cope (21489473)
-
+# Connect Four App
+## Game
 ### About
-Classic connect four game for Android in Kotlin using Jetpack Compose as part of the 2024 Sem 2 group MAD assignment.
+Classic connect four game for Android in Kotlin using Jetpack Compose.
 
 ### Game functionalities
 - Multiple Game Modes: Multiplayer (player vs player) and Singleplayer (player vs AI)
@@ -14,5 +12,6 @@ Classic connect four game for Android in Kotlin using Jetpack Compose as part of
 - State preservation
 - Modular UI Architecture
 
-## Part B
-I am integrating Firebase to store statistics and profile pictures in the cloud. Stay tuned for an explanation
+## Firebase
+I developed a Firebase database which stored, retrieved and updated global player statistics. I developed solutions which considered correctly structuring the database and asynchronous operation handling to eliminate concurrency issues.
+
